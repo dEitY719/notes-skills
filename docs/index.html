@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>notes-skills</title>
+<meta name="description" content="Five skills that turn finished work into written documents: root-cause analyses, reusable-pattern learnings, release notes, daily task logs, debugging blog posts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html.theme-dark{--bg:#0A0A0A;--surface:#141414;--surface-hover:#1C1C1C;--border:rgba(255,255,255,0.08);--text:#EDEDED;--text-secondary:#8b8b8b;--accent:#3b82f6;--accent-secondary:#8b5cf6;--positive:#10b981;--negative:#f43f5e;--warning:#f59e0b}
+html.theme-light{--bg:#FAFAF9;--surface:#FFFFFF;--surface-hover:#F5F5F4;--border:rgba(0,0,0,0.09);--text:#0f172a;--text-secondary:#5b6577;--accent:#2563eb;--accent-secondary:#7c3aed;--positive:#059669;--negative:#e11d48;--warning:#d97706}
+body{font-family:'Inter','Noto Sans KR',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.75;-webkit-font-smoothing:antialiased;letter-spacing:-0.01em;transition:background .3s,color .3s;scrollbar-gutter:stable;font-size:16px}
+h1,h2,h3{color:var(--text);letter-spacing:-0.03em;line-height:1.18;text-wrap:balance}
+h1{font-weight:700;font-size:clamp(2.3rem,6vw,3.6rem)}
+h2{font-weight:600;font-size:clamp(1.4rem,3vw,1.9rem)}
+h3{font-weight:600;font-size:1.15rem}
+p,li,td,th{color:var(--text)}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,monospace;font-size:.9em;background:var(--surface-hover);border:1px solid var(--border);border-radius:5px;padding:.1em .38em}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header.hero{padding:104px 0 52px;border-bottom:1px solid var(--border);background:radial-gradient(1100px 400px at 12% -12%,color-mix(in srgb,var(--accent) 15%,transparent),transparent 70%)}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-size:.76rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:6px 14px;margin-bottom:22px}
+.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.lead{margin-top:18px;font-size:clamp(1.02rem,1.9vw,1.22rem);color:var(--text-secondary);max-width:66ch;line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:40px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.stat-v{display:block;font-size:1.85rem;font-weight:700;letter-spacing:-0.04em;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat-l{display:block;margin-top:5px;font-size:.82rem;color:var(--text-secondary);line-height:1.45}
+section.block{padding:60px 0}
+section.block+section.block{padding-top:0}
+.sec-head{margin-bottom:26px}
+.sec-head p{color:var(--text-secondary);margin-top:8px;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:26px 26px 22px;display:flex;flex-direction:column;transition:box-shadow .2s ease}
+.card:hover{box-shadow:0 0 0 1px var(--border),0 10px 24px rgba(0,0,0,.10)}
+.card h3 code{background:color-mix(in srgb,var(--accent) 14%,transparent);border-color:color-mix(in srgb,var(--accent) 30%,transparent);color:var(--accent);font-size:1rem}
+.card-sub{margin-top:9px;font-weight:600;font-size:.97rem}
+.card-lead{margin-top:9px;color:var(--text-secondary);font-size:.92rem;line-height:1.65;flex:1}
+.card-links{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.card-links a{font-size:.85rem;font-weight:600;padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:var(--bg)}
+.card-links a:hover{background:var(--surface-hover);border-color:var(--accent);color:var(--accent)}
+.tw{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:460px}
+th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--surface-hover);font-weight:600;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--text-secondary);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface-hover)}
+pre{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;line-height:1.62}
+pre code{background:none;border:none;padding:0;font-size:.87rem;color:var(--text)}
+footer{border-top:1px solid var(--border);padding:30px 0 56px;font-size:.85rem;color:var(--text-secondary)}
+.viz-menu{position:fixed;top:16px;right:16px;z-index:9999}
+.viz-menu-toggle{width:44px;height:44px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(12px);transition:background .2s}
+.viz-menu-toggle:hover{background:var(--surface-hover)}
+.viz-menu-dropdown{position:absolute;top:52px;right:0;min-width:206px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:all .2s;backdrop-filter:blur(16px);box-shadow:0 12px 32px rgba(0,0,0,.22)}
+.viz-menu-dropdown.open{opacity:1;visibility:visible;transform:translateY(0)}
+.viz-menu-dropdown button{width:100%;padding:10px 13px;border:none;border-radius:8px;background:transparent;color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;transition:background .15s}
+.viz-menu-dropdown button:hover{background:var(--surface-hover)}
+.skip-to-content{position:absolute;top:-40px;left:6px;background:var(--accent);color:#fff;padding:8px 12px;border-radius:4px;opacity:0;pointer-events:none;transition:all .2s;z-index:10000}
+.skip-to-content:focus{top:6px;opacity:1;pointer-events:auto}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeInUp .6s ease-out both}
+.animate.delay-1{animation-delay:.06s}.animate.delay-2{animation-delay:.12s}.animate.delay-3{animation-delay:.18s}
+.animate.delay-4{animation-delay:.24s}.animate.delay-5{animation-delay:.3s}.animate.delay-6{animation-delay:.36s}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+@media (max-width:520px){header.hero{padding:78px 0 38px}.wrap{padding:0 17px}.card{padding:21px}}
+@media print{body{background:#fff!important;color:#000!important}.viz-menu{display:none!important}.card{break-inside:avoid;border:1px solid #ddd;box-shadow:none}.reveal{opacity:1!important;transform:none!important}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+@page{margin:1in}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Skip to content</a>
+<div class="viz-menu">
+  <button class="viz-menu-toggle" onclick="toggleMenu()" aria-label="Menu" aria-haspopup="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg></button>
+  <div class="viz-menu-dropdown" id="vizMenuDropdown" role="menu">
+    <button onclick="cycleTheme()" aria-label="Toggle theme"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M16 11.5A6.5 6.5 0 0 1 8.5 4a6.5 6.5 0 1 0 7.5 7.5z"/></svg><span id="themeLabel">Dark</span></button>
+    <button onclick="downloadImage()" aria-label="Download PNG"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v9m0 0l-3.5-3.5M10 12l3.5-3.5"/><path d="M3.5 14v2.5h13V14"/></svg><span>Download PNG</span></button>
+    <button onclick="window.print()" aria-label="Print or save as PDF"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M6 8V3h8v5"/><rect x="3" y="8" width="14" height="6" rx="1.5"/><path d="M6 13h8v4H6z"/></svg><span>Print / PDF</span></button>
+  </div>
+</div>
+<main id="main-content" role="main">
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">claude-plugin marketplace</span>
+    <h1 class="animate">notes-skills</h1>
+    <p class="lead animate delay-1">끝낸 일을 글로 바꾸는 다섯 개의 스킬. 장애 분석, 재사용 패턴 노트, 릴리즈 노트, 일자별 작업 로그, 디버깅 삽질 블로그. <code>notes</code> 라는 하나의 플러그인으로 묶여 여섯 개의 코딩 에이전트 하네스에 설치됩니다.</p>
+    <div class="stats">
+      <div class="stat animate delay-1"><span class="stat-v" data-count="5">5</span><span class="stat-l">스킬</span></div>
+      <div class="stat animate delay-2"><span class="stat-v" data-count="6">6</span><span class="stat-l">지원 하네스</span></div>
+      <div class="stat animate delay-3"><span class="stat-v" data-count="10">10</span><span class="stat-l">문서 페이지</span></div>
+      <div class="stat animate delay-4"><span class="stat-v">0.1.0</span><span class="stat-l">플러그인 버전</span></div>
+    </div>
+  </div>
+</header>
+
+<section class="block" data-reveal>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>스킬</h2>
+      <p>각 스킬마다 설명서(visual guide)와 실제로 한 번 실행한 기록(usage example)이 있습니다. usage 문서의 경로·수치·산출물은 전부 실제 실행 결과입니다.</p>
+    </div>
+    <div class="grid">
+      <article class="card animate delay-1">
+        <h3><code>rca</code></h3>
+        <p class="card-sub">Root Cause Analysis 보고서 작성</p>
+        <p class="card-lead">장애·버그·반복 실수 하나를 9개 섹션 고정 템플릿의 Jekyll 호환 마크다운 문서 한 개(<code>YYYY-MM-DD-&lt;slug&gt;.md</code>)로 산출합니다.</p>
+        <div class="card-links">
+          <a href="skill-guides/rca.html">visual guide</a>
+          <a href="skill-output/rca-usage.html">usage example</a>
+        </div>
+      </article>
+      <article class="card animate delay-2">
+        <h3><code>insight</code></h3>
+        <p class="card-sub">대화에서 재사용 가능한 패턴 하나를 노트로</p>
+        <p class="card-lead">지금 나눈 대화에서 재사용 가능한 패턴 한 개를 뽑아, 현재 repo 의 <code>docs/guide/learnings/</code> 에 50~80줄짜리 한국어 노트 한 개로 남기고 그 디렉터리의 색인까지 갱신합니다.</p>
+        <div class="card-links">
+          <a href="skill-guides/insight.html">visual guide</a>
+          <a href="skill-output/insight-usage.html">usage example</a>
+        </div>
+      </article>
+      <article class="card animate delay-3">
+        <h3><code>release-note</code></h3>
+        <p class="card-sub">git 히스토리를 사용자 관점 릴리즈 노트로</p>
+        <p class="card-lead">두 릴리즈 사이의 git 커밋을 수집해, 커밋을 1:1로 나열하는 대신 사용자 관점 테마로 묶은 한국어 릴리즈 노트 문서를 산출합니다.</p>
+        <div class="card-links">
+          <a href="skill-guides/release-note.html">visual guide</a>
+          <a href="skill-output/release-note-usage.html">usage example</a>
+        </div>
+      </article>
+      <article class="card animate delay-4">
+        <h3><code>task-history</code></h3>
+        <p class="card-sub">이번 세션의 작업을 일자별 로그에 기록</p>
+        <p class="card-lead">이번 대화에서 끝낸 작업을 일자별 로그 파일에 덧붙이고, 그대로 복사해 붙일 수 있는 JIRA 티켓 본문과 PR 설명 두 가지 형식을 함께 산출합니다.</p>
+        <div class="card-links">
+          <a href="skill-guides/task-history.html">visual guide</a>
+          <a href="skill-output/task-history-usage.html">usage example</a>
+        </div>
+      </article>
+      <article class="card animate delay-5">
+        <h3><code>blog-dev-learnings</code></h3>
+        <p class="card-sub">삽질기를 읽히는 한국어 개발 블로그로</p>
+        <p class="card-lead">디버깅 삽질기·장애·기술적 함정 하나를 &quot;고통 → 삽질 → 깨달음 → 해결&quot; 서사를 따르는 7개 섹션짜리 한국어 블로그 글 파일로 산출합니다.</p>
+        <div class="card-links">
+          <a href="skill-guides/blog-dev-learnings.html">visual guide</a>
+          <a href="skill-output/blog-dev-learnings-usage.html">usage example</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="block" data-reveal>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>어느 것을 고를까</h2>
+      <p>같은 사건이라도 남기는 문체가 다릅니다. 셋 중 하나를 고르는 것이지 셋을 다 돌리는 것이 아닙니다. 나머지 구분선은 <strong>파일이 어디에 떨어지는가</strong>입니다.</p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>현재 repo 안에 씀</th><th>바깥 절대 경로에 씀</th></tr></thead>
+        <tbody>
+          <tr><td><code>insight</code> -&gt; <code>docs/guide/learnings/</code></td><td><code>rca</code> -&gt; <code>$RCA_REPO_PATH</code></td></tr>
+          <tr><td><code>release-note</code> -&gt; 프로젝트의 기존 릴리즈 노트 관례</td><td><code>task-history</code> -&gt; <code>$TASK_HISTORY_DIR</code></td></tr>
+          <tr><td></td><td><code>blog-dev-learnings</code> -&gt; <code>~/para/archive/playbook/docs/dev-learnings/</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="block" data-reveal>
+  <div class="wrap">
+    <div class="sec-head"><h2>설치</h2></div>
+    <pre><code>/plugin marketplace add dEitY719/notes-skills
+/plugin install notes@notes-skills</code></pre>
+    <p style="margin-top:14px;color:var(--text-secondary)">Codex, Kimi CLI, Hermes Agent, OpenCode, Gemini CLI / Antigravity 설치 방법은 <a href="https://github.com/dEitY719/notes-skills#install">repo README</a> 를 보세요.</p>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">notes-skills &middot; <a href="https://github.com/dEitY719/notes-skills">github.com/dEitY719/notes-skills</a> &middot; MIT</div></footer>
+<script>
+function toggleMenu(){var d=document.getElementById('vizMenuDropdown');if(d)d.classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.viz-menu')){var d=document.getElementById('vizMenuDropdown');if(d)d.classList.remove('open');}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){var d=document.getElementById('vizMenuDropdown');if(d)d.classList.remove('open');}});
+var savedTheme=null;try{savedTheme=localStorage.getItem('viz-theme');}catch(e){}
+var currentTheme=savedTheme||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+function applyTheme(t){document.documentElement.className='theme-'+t;var l=document.getElementById('themeLabel');if(l)l.textContent=t==='dark'?'Dark':'Light';try{localStorage.setItem('viz-theme',t);}catch(e){}currentTheme=t;}
+function cycleTheme(){applyTheme(currentTheme==='dark'?'light':'dark');}
+applyTheme(currentTheme);
+document.querySelectorAll('[data-reveal]').forEach(function(el){el.classList.add('reveal');});
+var revealObserver=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');revealObserver.unobserve(e.target);}});},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(function(el){revealObserver.observe(el);});
+function animateCounters(){document.querySelectorAll('[data-count]').forEach(function(el){if(el.dataset.counted)return;el.dataset.counted='1';var target=parseFloat(el.dataset.count),start=performance.now(),dur=1100;(function tick(now){var p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(target*e).toLocaleString();if(p<1)requestAnimationFrame(tick);})(start);});}
+var counterEl=document.querySelector('[data-count]');
+if(counterEl){var cObs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){animateCounters();cObs.disconnect();}});},{threshold:0.3});cObs.observe(counterEl);}
+async function downloadImage(){var m=document.querySelector('.viz-menu');m.style.display='none';try{var url=await htmlToImage.toPng(document.body,{quality:1,pixelRatio:2,backgroundColor:getComputedStyle(document.body).backgroundColor});var a=document.createElement('a');a.href=url;a.download='notes-skills.png';a.click();}catch(e){console.error('Download failed:',e);}m.style.display='';}
+</script>
+</body>
+</html>
