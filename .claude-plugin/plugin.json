@@ -1,0 +1,21 @@
+{
+  "name": "notes",
+  "description": "Turn finished work into written documents: root-cause analyses, reusable-pattern learnings, release notes, daily task logs, and narrative debugging blog posts",
+  "version": "0.1.0",
+  "author": {
+    "name": "dEitY719",
+    "url": "https://github.com/dEitY719"
+  },
+  "homepage": "https://github.com/dEitY719/notes-skills",
+  "repository": "https://github.com/dEitY719/notes-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "plugin",
+    "marketplace",
+    "notes",
+    "documentation",
+    "rca",
+    "release-notes"
+  ]
+}

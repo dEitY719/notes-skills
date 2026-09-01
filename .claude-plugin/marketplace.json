@@ -1,0 +1,20 @@
+{
+  "name": "notes-skills",
+  "description": "Repo-documentation skills — root-cause analyses, reusable-pattern learnings, release notes, daily task logs, debugging blog posts",
+  "owner": {
+    "name": "dEitY719",
+    "url": "https://github.com/dEitY719"
+  },
+  "plugins": [
+    {
+      "name": "notes",
+      "description": "Turn finished work into written documents: root-cause analyses, reusable-pattern learnings, release notes, daily task logs, and narrative debugging blog posts",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "dEitY719",
+        "url": "https://github.com/dEitY719"
+      }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "notes",
+  "version": "0.1.0",
+  "description": "Turn finished work into written documents: root-cause analyses, reusable-pattern learnings, release notes, daily task logs, and narrative debugging blog posts.",
+  "author": {
+    "name": "dEitY719",
+    "url": "https://github.com/dEitY719"
+  },
+  "homepage": "https://github.com/dEitY719/notes-skills",
+  "repository": "https://github.com/dEitY719/notes-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "plugin",
+    "marketplace",
+    "notes",
+    "documentation",
+    "rca",
+    "release-notes"
+  ],
+  "skills": "./skills/",
+  "hooks": {},
+  "interface": {
+    "displayName": "Notes",
+    "shortDescription": "Write up what you just built or just fixed",
+    "longDescription": "Notes bundles the five skills that turn a finished session into a document someone else can read: rca writes a nine-section root-cause analysis, insight captures one reusable pattern into the repo's docs/guide/learnings/, release-note groups git history into user-facing themes, task-history appends a JIRA-plus-PR entry to a daily log, and blog-dev-learnings turns a debugging war story into a Korean blog post. Each skill mines the current conversation instead of asking you to retype it.",
+    "developerName": "dEitY719",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Write an RCA for the incident we just debugged.",
+      "Record what I did this session."
+    ],
+    "websiteURL": "https://github.com/dEitY719/notes-skills",
+    "brandColor": "#2563EB",
+    "screenshots": []
+  }
+}

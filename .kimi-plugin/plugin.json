@@ -1,0 +1,34 @@
+{
+  "name": "notes",
+  "version": "0.1.0",
+  "description": "Write up finished work: root-cause analyses, reusable-pattern learnings, release notes, daily task logs, debugging blog posts.",
+  "author": {
+    "name": "dEitY719",
+    "url": "https://github.com/dEitY719"
+  },
+  "homepage": "https://github.com/dEitY719/notes-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "plugin",
+    "marketplace",
+    "notes",
+    "documentation",
+    "rca",
+    "release-notes"
+  ],
+  "skills": "./skills/",
+  "skillInstructions": "Kimi Code tool mapping for the notes skills.\n\nThe authoritative mapping is owned by the sibling repo dEitY719/harness-skills at `references/kimi-tools.md` (dotfiles #1410 F-5). Read it there when a skill names a tool you do not recognise; this repo deliberately keeps no copy. Summary:\n\n- \"Ask the user\" -> `AskUserQuestion`. `notes:insight` (candidate pick, memory pointer) and `notes:blog-dev-learnings` (title pick) both wait on a real answer.\n- `TodoWrite` -> Kimi Code's `TodoList` tool.\n- \"Dispatch a subagent\" -> `Agent` with `subagent_type: \"coder\"` (implementation) or \"explore\" (read-only). Never pass `general-purpose`.\n- Read / Write / Edit / Bash / Grep / Glob keep their exposed Kimi names. Search contents with `Grep`; match paths with `Glob`.\n- Every skill here mines the current conversation for its source material. Kimi Code has no transcript-reading tool: use what is in the live context window, and when that is empty, ask the user for the incident instead of inventing one.\n- `notes:rca` and `notes:task-history` may commit (`--commit`, auto-commit). They never push unless the documented env var says so; do not add a push.\n- Paths are absolute and outside the current repo for `notes:rca`, `notes:task-history`, and `notes:blog-dev-learnings` ($RCA_REPO_PATH, $TASK_HISTORY_DIR, ~/para/archive/). `notes:insight` and `notes:release-note` write inside the current repo.",
+  "interface": {
+    "displayName": "Notes",
+    "shortDescription": "Write up what you just built or just fixed",
+    "longDescription": "Notes bundles the five skills that turn a finished session into a readable document: rca, insight, release-note, task-history, and blog-dev-learnings.",
+    "developerName": "dEitY719",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/dEitY719/notes-skills"
+  }
+}

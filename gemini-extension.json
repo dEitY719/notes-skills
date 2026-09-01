@@ -1,0 +1,6 @@
+{
+  "name": "notes",
+  "description": "Write up finished work — RCAs, learnings, release notes, task logs, blog posts",
+  "version": "0.1.0",
+  "contextFileName": "GEMINI.md"
+}

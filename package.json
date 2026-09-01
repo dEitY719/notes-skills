@@ -1,0 +1,21 @@
+{
+  "name": "notes-skills",
+  "version": "0.1.0",
+  "description": "Skills for writing up finished work — RCAs, learnings, release notes, task logs, blog posts",
+  "type": "module",
+  "main": ".opencode/plugins/notes.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dEitY719/notes-skills.git"
+  },
+  "keywords": [
+    "skills",
+    "plugin",
+    "marketplace",
+    "notes",
+    "documentation",
+    "rca",
+    "release-notes"
+  ]
+}
