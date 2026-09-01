@@ -18,6 +18,17 @@ it.
 | `task-history` | `/notes:task-history ["<description>"]` | Appends this session's work to a daily log as a JIRA-pasteable block plus a markdown PR description, then auto-commits. |
 | `blog-dev-learnings` | `/notes:blog-dev-learnings "<topic-hint>"` | Retells a debugging war story as an entertaining Korean blog post following the arc 고통 -> 삽질 -> 깨달음 -> 해결. |
 
+### Visual guides and worked examples (GitHub Pages)
+
+- `rca` — [visual guide](https://deity719.github.io/notes-skills/skill-guides/rca.html) · [usage example](https://deity719.github.io/notes-skills/skill-output/rca-usage.html) (incident to 9-section report)
+- `insight` — [visual guide](https://deity719.github.io/notes-skills/skill-guides/insight.html) · [usage example](https://deity719.github.io/notes-skills/skill-output/insight-usage.html) (chat to learnings note)
+- `release-note` — [visual guide](https://deity719.github.io/notes-skills/skill-guides/release-note.html) · [usage example](https://deity719.github.io/notes-skills/skill-output/release-note-usage.html) (git range to themed notes)
+- `task-history` — [visual guide](https://deity719.github.io/notes-skills/skill-guides/task-history.html) · [usage example](https://deity719.github.io/notes-skills/skill-output/task-history-usage.html) (session to JIRA and PR text)
+- `blog-dev-learnings` — [visual guide](https://deity719.github.io/notes-skills/skill-guides/blog-dev-learnings.html) · [usage example](https://deity719.github.io/notes-skills/skill-output/blog-dev-learnings-usage.html) (war story to blog post)
+
+Each page is generated from a Markdown source under
+[`docs/skill-guides/`](docs/skill-guides) and [`docs/skill-output/`](docs/skill-output).
+
 ### Picking between them
 
 Same incident, three registers: `rca` is the formal postmortem,
