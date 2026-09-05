@@ -76,7 +76,7 @@ per-entry structure, and output conventions (emoji-free, append-only, language).
 
 ### Step 7–8: Auto-commit + confirm
 
-Read `references/commit-confirm.md` for the commit pattern and final verdict block.
+Read `references/commit-confirm.md` for the commit pattern.
 
 ## Example
 

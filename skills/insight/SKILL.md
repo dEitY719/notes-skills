@@ -90,7 +90,8 @@ Next: review the file, then optionally /notes:insight again for remaining candid
 
 ## Constraints
 
-- **Korean body, English headings** — for human teammates per README's language policy. **One file per invocation** — multiple insights → pick one, offer the rest as a follow-up run.
+- **Stop on any step failure** — Steps 1–8 are sequential; on the first error stop and report the failing step. **Korean body, English headings** — per README's language policy.
+- **No abstract generalities** — no PR/commit/file:line link → reject (back to Step 4 or decline). **One file per invocation** — multiple insights → pick one, offer the rest as a follow-up run.
 - **Never auto-write to `memory/`** — suggest, wait for confirmation. **Never overwrite silently** — existing slug → surface diff, ask update vs. new slug.
 
 ## Related skills
