@@ -49,13 +49,5 @@ regardless of the current working directory. This skill writes across project bo
 
 ## Final Output (verdict)
 
-After saving, report:
-
-```
-[OK] notes:blog-dev-learnings — <slug>-blog.md
-  path: ~/para/archive/playbook/docs/dev-learnings/<slug>-blog.md
-  lines: <n>
-  title: "<chosen title>"
-
-Next: open file and review; commit when satisfied
-```
+After saving, report the success verdict block defined in `../SKILL.md` →
+`## Final Output`.

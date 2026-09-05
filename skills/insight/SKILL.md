@@ -6,6 +6,7 @@ description: >-
   Do NOT use for 삽질 blog posts (notes:blog-dev-learnings), postmortems
   (notes:rca), or work logs (notes:task-history).
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob
+license: MIT
 metadata:
   model_recommendation:
     tier: sonnet
@@ -42,7 +43,7 @@ from recent turns with one-line previews and let the user pick. Don't draft spec
 
 Read `references/routing.md` to check whether the candidate actually belongs in
 `docs/guide/learnings/`. Decline topics that belong in `docs/guide/technic/`,
-`docs/.ssot/`, `docs/feature/<name>/`, `claude/skills/`, or `memory/` — or in a
+`docs/.ssot/`, `docs/feature/<name>/`, `<plugin>-skills/skills/`, or `memory/` — or in a
 sibling `notes` skill — using the phrasing template there.
 
 ## Step 3: Check for overlap
@@ -89,9 +90,7 @@ Next: review the file, then optionally /notes:insight again for remaining candid
 
 ## Constraints
 
-- **Stop on any step failure** — Steps 1–8 are sequential; on the first error stop and report the failing step, do not proceed silently.
-- **Korean body, English headings** — for human teammates per README's language policy. **Don't paraphrase the README** — re-read every run; if rules conflict, README wins.
-- **No abstract generalities** — no PR/commit/file:line link → reject (back to Step 4 or decline). **One file per invocation** — multiple insights → pick one, offer the rest as a follow-up run.
+- **Korean body, English headings** — for human teammates per README's language policy. **One file per invocation** — multiple insights → pick one, offer the rest as a follow-up run.
 - **Never auto-write to `memory/`** — suggest, wait for confirmation. **Never overwrite silently** — existing slug → surface diff, ask update vs. new slug.
 
 ## Related skills

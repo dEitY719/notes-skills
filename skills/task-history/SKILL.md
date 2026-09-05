@@ -4,8 +4,9 @@ description: >-
   오늘 한 작업을 JIRA 티켓 + PR 설명 형식으로 daily log 에 기록. Use for
   `/notes:task-history` or "record what I did this session". Do NOT use for reusable
   patterns (notes:insight), postmortems (notes:rca), or vault notes
-  (obsidian:session-clip).
+  (pkm:obsidian-session-clip).
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+license: MIT
 metadata:
   model_recommendation:
     tier: haiku
@@ -70,16 +71,15 @@ commits exist in the conversation.
 
 ### Step 6: Write to file
 
-Read `references/file-entry-structure.md` for the append/create + separator policy
-and per-entry structure.
+Read `references/file-entry-structure.md` for the append/create + separator policy,
+per-entry structure, and output conventions (emoji-free, append-only, language).
 
 ### Step 7–8: Auto-commit + confirm
 
 Read `references/commit-confirm.md` for the commit pattern and final verdict block.
 
-## Rules and Example
+## Example
 
-Read `references/rules.md` for output conventions (emoji-free, append-only, language).
 Read `references/example.md` for a full worked entry.
 
 ## Final Output
@@ -97,4 +97,4 @@ Next: paste JIRA block into ticket / open PR with the markdown block
 
 ## Related skills
 
-재사용 패턴 문서화는 [[notes:insight]], 장애 분석은 [[notes:rca]]. 세션 1건을 PARA vault Inbox 노트로 남기는 것은 [[obsidian:session-clip]] — 이쪽은 일자별 daily log append 다.
+재사용 패턴 문서화는 [[notes:insight]], 장애 분석은 [[notes:rca]]. 세션 1건을 PARA vault Inbox 노트로 남기는 것은 [[pkm:obsidian-session-clip]] — 이쪽은 일자별 daily log append 다.

@@ -1,7 +1,11 @@
 ---
 name: release-note
-description: Use when generating structured release notes from git history between two releases — finding anchor commits, categorizing by conventional-commit prefix, grouping into user-facing themes, and formatting in Korean
+description: >-
+  두 릴리즈 사이 git 히스토리를 사용자 관점 테마로 묶은 한국어 릴리즈 노트 작성. Use for
+  `/notes:release-note`, "릴리즈 노트 만들어줘". Do NOT use for 대화 기반 기록 — 작업 로그는
+  notes:task-history, 장애 분석은 notes:rca.
 allowed-tools: Read, Bash, Grep, Glob, Write, Edit
+license: MIT
 metadata:
   model_recommendation:
     tier: sonnet
@@ -16,11 +20,17 @@ metadata:
 
 If args is `-h`/`--help`/`help`, read `references/help.md` verbatim and stop.
 
-## 목적
+## Options
 
-git 히스토리를 분석해 **사용자 관점**의 릴리즈 노트를 생성한다.
+| Option | Description | Default |
+|--------|-------------|---------|
+| `<anchor-ref>` | 이전 릴리즈 경계 (태그 / 커밋 / 브랜치). 주면 1단계 자동 탐지를 건너뛴다. | 자동 탐지 |
+| `<head-ref>` | 커밋 범위의 상한. | `HEAD` |
+| `-h` / `--help` / `help` | `references/help.md` 를 그대로 출력하고 종료. | — |
 
-**핵심 원칙**: 커밋은 *무엇이* 바뀌었는지 말해주고, 릴리즈 노트는 그것이 *사용자에게 어떤 의미인지* 말해준다.
+## 핵심 원칙
+
+커밋은 *무엇이* 바뀌었는지 말해주고, 릴리즈 노트는 그것이 *사용자에게 어떤 의미인지* 말해준다.
 
 ## 워크플로
 
@@ -28,7 +38,8 @@ git 히스토리를 분석해 **사용자 관점**의 릴리즈 노트를 생성
 
 ### 1. 앵커 커밋 찾기
 
-이전 릴리즈의 경계 커밋을 찾는다. 우선순위:
+`<anchor-ref>` 인자가 있으면 그것을 앵커로 쓰고 이 단계를 건너뛴다. 없으면 이전
+릴리즈의 경계 커밋을 찾는다. 우선순위:
 
 1. **git 태그** (있으면 가장 신뢰할 수 있음)
 2. **이전 릴리즈 노트 문서의 커밋** (태그가 없는 프로젝트의 관례)
@@ -38,8 +49,8 @@ git 히스토리를 분석해 **사용자 관점**의 릴리즈 노트를 생성
 
 ### 2. 커밋 수집 및 분류
 
-`<anchor>..HEAD` 범위의 커밋을 수집하고 conventional commit prefix별로 분류:
-`feat`, `fix`, `refactor`, `docs`, `chore`, 그리고 **비관례 커밋**.
+`<anchor>..<head-ref 또는 HEAD>` 범위의 커밋을 수집하고 conventional commit prefix별로
+분류: `feat`, `fix`, `refactor`, `docs`, `chore`, 그리고 **비관례 커밋**.
 
 [WARN] 비관례 커밋(`grep -vE`)을 반드시 확인 — 놓치기 쉬움.
 
@@ -54,18 +65,14 @@ git 히스토리를 분석해 **사용자 관점**의 릴리즈 노트를 생성
 - 독립 `fix:` → "버그 수정" 섹션
 - 독립 `refactor:` → "리팩토링" 섹션
 
-그룹핑 휴리스틱과 **테마 네이밍 규칙**은 `references/grouping-heuristics.md` 참고.
+그룹핑 휴리스틱, **테마 네이밍 규칙**, 흔한 실수 체크리스트는
+`references/grouping-heuristics.md` 참고.
 
 ### 4. 릴리즈 노트 작성
 
-프로젝트의 기존 관례를 먼저 확인한다:
-
-```bash
-# 이전 릴리즈 노트 파일이 있으면 그 포맷을 따르는 것이 최우선
-ls docs/release-notes/ 2>/dev/null || ls CHANGELOG* 2>/dev/null
-```
-
-없으면 `references/template.md`의 기본 템플릿을 사용.
+프로젝트의 기존 관례를 먼저 확인한다 —
+`ls docs/release-notes/ 2>/dev/null || ls CHANGELOG* 2>/dev/null`. 기존 릴리즈 노트가
+있으면 그 포맷이 최우선, 없으면 `references/template.md`의 기본 템플릿을 사용.
 
 ### 5. 저장 및 커밋
 
@@ -84,14 +91,6 @@ git commit -m "docs: add <version> release notes"
 Next: review <release-notes-path>, then git push origin <branch>
 ```
 
-## 빠른 레퍼런스
+## Related skills
 
-| 단계 | 핵심 |
-|------|------|
-| 앵커 | 태그 → 이전 릴리즈 노트 커밋 → 사용자 확인 |
-| 수집 | `git log --oneline --reverse <anchor>..HEAD` |
-| 분류 | conventional prefix별 grep + 비관례 확인 |
-| 그룹핑 | 사용자 관점 테마로 묶기 (구현 용어 금지) |
-| 작성 | 프로젝트 관례 먼저, 없으면 템플릿 |
-
-흔한 실수 체크리스트는 `references/grouping-heuristics.md` 의 "흔한 실수" 절 참고.
+작업 로그는 [[notes:task-history]], 재사용 패턴 문서화는 [[notes:insight]], 장애 분석은 [[notes:rca]], 서사형 삽질 블로그는 [[notes:blog-dev-learnings]].

@@ -12,7 +12,7 @@ formal, or for a different audience, refuse and route.
 | Long-form tech doc, hundreds of lines | `docs/guide/technic/` | learning is a 50–80 line snippet, not a manual |
 | Project policy / SSOT | `docs/.ssot/` | SSOTs are normative ("we do X"), learnings are experiential ("we discovered X works") |
 | Feature design bundle (multi-file, diagrams) | `docs/feature/<name>/` | feature dirs hold many artifacts together; learnings are single files |
-| AI behavior instructions | `claude/skills/<name>/SKILL.md` (English) | learnings are for human teammates; SKILL files are for AI |
+| AI behavior instructions | `<plugin>-skills/skills/<name>/SKILL.md` (English) | learnings are for human teammates; SKILL files are for AI |
 | User preference / collaboration style | `memory/` (auto-memory) | memory is private to Claude sessions, learnings are public |
 
 If a candidate fits one of these rows, decline the write and tell the

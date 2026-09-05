@@ -4,6 +4,7 @@ description: >-
   디버깅 삽질기를 재미있는 한국어 개발 블로그 글로 작성. Use for `/notes:blog-dev-learnings`,
   "블로그 써줘", "삽질 블로그", or "blog post about this debugging war story". Do NOT use
   for formal RCA (notes:rca), API docs, or READMEs.
+license: MIT
 metadata:
   model_recommendation:
     tier: sonnet

@@ -5,6 +5,7 @@ description: >-
   or "document this incident as a postmortem". Do NOT use for narrative 삽질 blog
   posts (notes:blog-dev-learnings) or daily work logs (notes:task-history).
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash, AskUserQuestion
+license: MIT
 metadata:
   model_recommendation:
     tier: sonnet
@@ -30,13 +31,9 @@ review, technical blog, AI tool training, junior engineer onboarding.
 
 ## Trigger scenarios
 
-Use when the user wants to record, document, or summarize:
-
-- Production incidents and postmortems.
-- Bug fixes with non-obvious root cause.
-- Technical "삽질" stories worth preserving.
-- Pattern-level failures spanning multiple modules.
-- Anti-patterns discovered during code review.
+Use for production incidents and postmortems, bug fixes with a non-obvious root
+cause, "삽질" stories worth preserving, pattern-level failures spanning modules,
+and anti-patterns found in code review.
 
 ## Options
 
