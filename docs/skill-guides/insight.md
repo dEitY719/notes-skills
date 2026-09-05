@@ -26,7 +26,7 @@
 | 오늘 한 작업의 일지 | `notes:task-history` |
 
 `docs/guide/learnings/` 가 아니라 `docs/guide/technic/`, `docs/.ssot/`,
-`docs/feature/<name>/`, `claude/skills/`, `memory/` 에 속하는 주제라면 스킬이
+`docs/feature/<name>/`, `<plugin>-skills/skills/`, `memory/` 에 속하는 주제라면 스킬이
 스스로 거절합니다. 판정 기준은 `references/routing.md` 에 있습니다.
 
 ## 호출 형식

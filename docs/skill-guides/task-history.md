@@ -24,9 +24,9 @@
 | 오늘 한 작업의 일지 | **`task-history`** (이 스킬) |
 | 재사용 가능한 패턴 | `notes:insight` |
 | 형식을 갖춘 포스트모템 | `notes:rca` |
-| 세션 1건을 PARA vault Inbox 노트로 | `obsidian:session-clip` |
+| 세션 1건을 PARA vault Inbox 노트로 | `pkm:obsidian-session-clip` |
 
-`obsidian:session-clip` 과 특히 헷갈립니다. 이 스킬은 **일자별 daily log 에
+`pkm:obsidian-session-clip` 과 특히 헷갈립니다. 이 스킬은 **일자별 daily log 에
 append** 하고, 저쪽은 vault Inbox 에 노트를 **한 개 새로 만듭니다**.
 
 ## 호출 형식

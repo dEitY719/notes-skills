@@ -31,15 +31,5 @@ without asking the user for confirmation.
 
 ## Step 8: Confirm to user
 
-After writing and committing, report the verdict:
-
-```
-[OK] notes:task-history — entry appended
-  path: <task-history-file>
-  time: HH:MM
-  project: <project-name>
-  pr_section: included | skipped
-  commit: <hash> chore(task-history): YYYY-MM-DD <summary>
-
-Next: paste JIRA block into ticket / open PR with the markdown block
-```
+After writing and committing, report the success verdict block defined in
+`../SKILL.md` → `## Final Output`.
