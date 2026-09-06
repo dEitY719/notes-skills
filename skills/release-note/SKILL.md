@@ -49,12 +49,14 @@ If args is `-h`/`--help`/`help`, read `references/help.md` verbatim and stop.
 
 ### 2. 커밋 수집 및 분류
 
-`<anchor>..<head-ref 또는 HEAD>` 범위의 커밋을 수집하고 conventional commit prefix별로
-분류: `feat`, `fix`, `refactor`, `docs`, `chore`, 그리고 **비관례 커밋**.
+`bash "${CLAUDE_PLUGIN_ROOT}/lib/collect-commits.sh" <anchor> [<head-ref>]` 로
+범위의 커밋을 한 번에 수집·분류한다. 출력은 커밋당 한 줄
+`<type><TAB><sha><TAB><subject>` (type 은 conventional prefix 또는 `other`) +
+마지막 요약 줄 `total=<n> other=<n> first_date=<d> last_date=<d>`.
 
-[WARN] 비관례 커밋(`grep -vE`)을 반드시 확인 — 놓치기 쉬움.
+[WARN] `other` 로 분류된 커밋(비관례)을 반드시 확인 — 놓치기 쉬움.
 
-명령 모음은 `references/git-commands.md` 참고.
+앵커를 직접 찾아야 하는 경우의 git 명령은 `references/git-commands.md` 참고.
 
 ### 3. 테마로 그룹핑 (가장 중요)
 
