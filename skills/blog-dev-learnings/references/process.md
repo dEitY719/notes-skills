@@ -1,8 +1,6 @@
 # Process — how the skill is invoked and runs
 
-Steps are sequential — on the first error (e.g., target directory unwriteable, no
-conversation context to mine and no topic provided), stop and report rather than
-fabricating content.
+Stop-on-error policy: `../SKILL.md` → `## Step 3: Save and Confirm`.
 
 ## How This Skill Is Invoked
 
@@ -41,11 +39,6 @@ If the conversation doesn't contain enough detail about the incident:
 2. **Read 1-2 existing posts** to calibrate voice
 3. **Propose 3 title candidates**
 4. **Write and save**
-
-## Important: Always write to the absolute path
-
-The output path is always `~/para/archive/playbook/docs/dev-learnings/{topic}-blog.md`,
-regardless of the current working directory. This skill writes across project boundaries.
 
 ## Final Output (verdict)
 

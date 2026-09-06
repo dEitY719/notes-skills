@@ -18,7 +18,7 @@ production incidents, and technical gotchas. Saves to
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `"<topic-hint>"` | Topic summary, specific incident, or vague pointer ("오늘 삽질한 거"). | — |
+| `"<topic-hint>"` | Topic summary, specific incident, or vague pointer ("오늘 삽질한 거"). | none — mine the current conversation |
 | `-h` / `--help` / `help` | Print this help and stop. | — |
 
 ## Examples
