@@ -20,6 +20,8 @@ itself has no frontmatter; match it.
 
 ## Required sections (in order)
 
+If this list and the repo README disagree, the README wins — re-read it (Step 1).
+
 Headings stay English (`## Context`, `## Pattern`, …) per the in-repo
 convention; body is Korean.
 
@@ -54,6 +56,8 @@ Don't pad. If a note has both bonus sections plus the 5 required ones, the
 content had better justify the length.
 
 ## Length policy
+
+If this table and the repo README disagree, the README wins — re-read it (Step 1).
 
 | Range | Action |
 |---|---|

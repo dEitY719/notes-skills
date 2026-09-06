@@ -4,7 +4,6 @@
 
 ```
 /notes:insight [topic-hint]
-/notes:insight [topic-hint]
 ```
 
 ## Arguments
