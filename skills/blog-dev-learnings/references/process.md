@@ -1,7 +1,5 @@
 # Process — how the skill is invoked and runs
 
-Stop-on-error policy: `../SKILL.md` → `## Step 3: Save and Confirm`.
-
 ## How This Skill Is Invoked
 
 The user runs this skill from **any project directory** via Claude Code TUI:

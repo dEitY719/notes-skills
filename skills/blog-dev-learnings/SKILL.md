@@ -47,8 +47,7 @@ Follow the narrative arc 고통 → 삽질 → 깨달음 → 해결. Read
 ## Step 3: Save and Confirm
 
 Read `references/process.md` for the two invocation paths (conversation-context vs
-interview), the absolute save path, and the stop-on-error policy. The verdict block
-below is the one to print.
+interview). The verdict block below is the one to print.
 
 Steps are sequential — on the first error (no conversation context to mine and no
 topic given, or an unwriteable target directory), stop and report rather than
