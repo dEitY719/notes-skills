@@ -97,13 +97,21 @@ selftest() {
   git -C "$tmp" commit -q --allow-empty -m "feat: add widget"
   git -C "$tmp" commit -q --allow-empty -m "test: cover widget"
   git -C "$tmp" commit -q --allow-empty -m "fix(widget): off-by-one"
+  git -C "$tmp" commit -q --allow-empty -m "build(deps)!: bump major"
+  git -C "$tmp" commit -q --allow-empty -m "ci: add lint job"
+  git -C "$tmp" commit -q --allow-empty -m "perf: cache lookup"
+  git -C "$tmp" commit -q --allow-empty -m "style: reformat"
   git -C "$tmp" commit -q --allow-empty -m "bump deps"
 
   out=$(cd "$tmp" && bash "$self" "$anchor" HEAD)
 
-  # 1. every non-anchor commit appears exactly once, in order.
+  # 1. every non-anchor commit appears exactly once, in order — including
+  # the codex-review follow-up cases (notes-skills#4 PR #11): build/ci/perf/
+  # style each get their own type, and a scope + `!` breaking-change marker
+  # (`build(deps)!:`) doesn't stop the type from matching.
   types=$(printf '%s\n' "$out" | sed '$d' | cut -f1)
-  chk "types in order" "$types" "$(printf 'feat\ntest\nfix\nother')"
+  chk "types in order" "$types" \
+    "$(printf 'feat\ntest\nfix\nbuild\nci\nperf\nstyle\nother')"
 
   # 2. THE regression case: `test:` gets its own type, not lost.
   chk "test: commit classified, not dropped" \
@@ -115,7 +123,7 @@ selftest() {
 
   # 4. summary line totals match.
   summary=$(printf '%s\n' "$out" | tail -1)
-  chk "summary line" "$summary" "total=4 other=1 first_date=$(date +%Y-%m-%d) last_date=$(date +%Y-%m-%d)"
+  chk "summary line" "$summary" "total=8 other=1 first_date=$(date +%Y-%m-%d) last_date=$(date +%Y-%m-%d)"
 
   # 5. bad anchor fails with exit 2, not a silent empty result.
   set +e
@@ -123,6 +131,17 @@ selftest() {
   rc=$?
   set -e
   chk "bad anchor exits 2" "$rc" "2"
+
+  # 6. an embedded literal TAB in the subject does not corrupt the TSV parse
+  # (PR #11 review, agy BLOCKER claim). `read`'s field-splitting hands every
+  # excess field to the LAST named variable verbatim, tabs included, so the
+  # subject column survives intact rather than shifting into a bogus 4th
+  # field or truncating at the first embedded tab.
+  git -C "$tmp" commit -q --allow-empty -m "$(printf 'feat: a\tb\tc')"
+  tab_out=$(cd "$tmp" && bash "$self" HEAD~1 HEAD)
+  chk "embedded tab in subject preserved" \
+    "$(printf '%s\n' "$tab_out" | head -1)" \
+    "$(printf 'feat\t%s\tfeat: a\tb\tc' "$(git -C "$tmp" log -1 --format=%h)")"
 
   if [ "$fails" -eq 0 ]; then
     printf '[OK] collect-commits selftest: all cases passed\n'
