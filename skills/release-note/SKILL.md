@@ -50,9 +50,10 @@ If args is `-h`/`--help`/`help`, read `references/help.md` verbatim and stop.
 ### 2. 커밋 수집 및 분류
 
 `bash "${CLAUDE_PLUGIN_ROOT}/lib/collect-commits.sh" <anchor> [<head-ref>]` 로
-범위의 커밋을 한 번에 수집·분류한다 (경로 대안은 `references/git-commands.md`
-참고). 출력은 커밋당 한 줄 `<type><TAB><sha><TAB><subject>` (type 은
-conventional prefix 또는 `other`) + 요약 줄 `total=<n> other=<n> first_date=<d> last_date=<d>`.
+범위의 커밋을 한 번에 수집·분류한다. **`CLAUDE_PLUGIN_ROOT` 는 Claude Code 전용 —
+그 외 하네스는 반드시 `references/git-commands.md` 의 대체 경로를 쓸 것.** 출력은
+커밋당 한 줄 `<type><TAB><sha><TAB><subject>` (type 은 conventional prefix 또는
+`other`) + 요약 줄 `total=<n> other=<n> first_date=<d> last_date=<d>`.
 
 [WARN] `other` 로 분류된 커밋(비관례)을 반드시 확인 — 놓치기 쉬움.
 
