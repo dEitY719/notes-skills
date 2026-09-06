@@ -1,8 +1,7 @@
 # Step 1..6 detailed instructions
 
-The workflow has 6 sequential steps. Each step MUST complete with `[OK]`
-before the next runs. On any `[FAIL]`, the chain stops — do not skip
-forward, do not retry silently.
+The workflow has 6 sequential steps. The stop-on-first-failure rule is stated
+once, in `SKILL.md` -> "Workflow (stop on first failure)".
 
 ## Step 1 — Gather (always)
 
@@ -53,33 +52,33 @@ If root cause is ambiguous:
 
 ## Step 3 — Validate (always)
 
-Run three check passes against the drafted file. Each pass produces an
-`[OK]` or `[FAIL]` line. Any `[FAIL]` halts the chain.
+Two passes: the mechanical one is a script, the judgment one is yours. Both
+produce `[OK]` / `[FAIL]` lines, and any `[FAIL]` halts the chain.
 
-### Structure checks
+### Mechanical checks — run the helper, do not re-derive them
 
-- All 9 core sections present (or explicitly justified skips for §6).
-- Executive Summary < 100 words.
-- Markdown syntax valid.
-- No undefined terminology.
-- Code examples specify a language.
+```bash
+bash skills/rca/lib/validate-rca.sh \
+  "${RCA_REPO_PATH:-$HOME/para/archive/rca-knowledge}/docs/analysis/<file>.md"
+```
 
-### Content checks
+It asserts the deterministic half — sections 1-9 present and in template order
+(§6 optional), YAML frontmatter delimited with `id` / `title` / `slug` / `date`,
+Executive Summary under 100 words, no emoji codepoints anywhere — and exits
+non-zero if any of them failed. Report its lines verbatim; a non-zero exit is
+the Step 3 `[FAIL]`. Its `[WARN] total-length` line covers the 1500-2500 word
+guide, which the template calls flexible: report it, do not fail on it.
 
-- Root Cause clearly stated.
-- Solution reproducible (step-by-step).
+### Judgment checks — model reads the draft
+
+- Root Cause clearly stated; Solution reproducible (step-by-step).
 - All four audiences addressed.
-- YAML frontmatter parses.
+- Markdown syntax valid; code examples specify a language.
+- No undefined terminology.
 - No confidential / sensitive info (unless `--private`).
-- No emojis anywhere — status uses `[OK]` / `[FAIL]` or `yes` / `no`.
-
-### Quality checks
-
 - Tone consistent (professional yet accessible).
-- Examples concrete, not generic.
-- Prevention measures actionable.
+- Examples concrete, not generic; prevention measures actionable.
 - Links / references valid.
-- Total length 1500–2500 words (flexible).
 
 ## Step 4 — Audience apply (always)
 

@@ -52,8 +52,8 @@ commits. Detailed instructions for each step live in
 2. **Step 2 — Draft**: apply the 9-section template from
    `references/document-template.md`; write to
    `${RCA_REPO_PATH}/docs/analysis/YYYY-MM-DD-{slug}.md`.
-3. **Step 3 — Validate**: structure / content / quality checks. No emojis,
-   sections in order, frontmatter parses, all four audiences addressed.
+3. **Step 3 — Validate**: run `lib/validate-rca.sh <draft>` for the mechanical
+   checks, then judge the rest yourself. See `phases-detail.md` → Step 3.
 4. **Step 4 — Audience apply**: redact or enhance per `--audience`. See
    `references/audience-policies.md`.
 5. **Step 5 — Commit (conditional)**: if `--commit`,
@@ -94,4 +94,4 @@ Failure:
 ## References
 
 - `references/help.md` (verbatim usage) · `references/document-template.md` (9-section spec + frontmatter) · `references/phases-detail.md` (Step 1..6 detail).
-- `references/options.md` (flag matrix + `RCA_REPO_PATH` env-var SSOT) · `references/audience-policies.md` (blog/private/internal redaction) · `references/examples.md` (small/medium/large sizing).
+- `references/options.md` (flag matrix + `RCA_REPO_PATH` env-var SSOT) · `references/audience-policies.md` (blog/private/internal redaction) · `references/examples.md` (small/medium/large sizing) · `lib/validate-rca.sh` (Step 3 mechanical checks; `--self-test`).
