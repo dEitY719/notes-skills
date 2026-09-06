@@ -80,6 +80,12 @@ Two things this repo depends on are owned by `dEitY719/harness-skills`
   numbers, commit SHAs, and `file:line` anchors. A step that would let a skill
   fabricate that instead of failing is a bug, not a convenience.
 
+- **Helper scripts are optional, and self-testing when present.** A skill that
+  needs a deterministic check ships it as `skills/<name>/lib/*.sh` with a
+  `--self-test` case. `tests/run.sh` discovers every such script and runs it,
+  and CI runs `tests/run.sh` — so nothing needs registering, but a helper
+  without a `--self-test` is untested code.
+
 ## Emojis
 
 Not in prose, manifests, or workflow files — token efficiency, same rule as the
