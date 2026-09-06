@@ -3,7 +3,7 @@
 ## Synopsis
 
 ```
-/notes:blog-dev-learnings "<topic-hint>"
+/notes:blog-dev-learnings ["<topic-hint>"]
 ```
 
 ## Description
@@ -24,6 +24,7 @@ production incidents, and technical gotchas. Saves to
 ## Examples
 
 ```
+/notes:blog-dev-learnings                      # no argument — mine the current conversation
 /notes:blog-dev-learnings "지금까지 너와 작업한 내용"
 /notes:blog-dev-learnings "오늘 redis sed injection 삽질"
 /notes:blog-dev-learnings "WSL systemd 감지 문제"
