@@ -40,6 +40,11 @@ Hermes, OpenCode)는 이 변수를 지원하지 않으므로, 지금 읽고 있�
 `lib/collect-commits.sh` 를 대신 쓴다 — 경로 깊이가 파일마다 달라
 "몇 단계 위"로 고정할 수 없어 구조 기준으로 찾는다.
 
+예: 지금 읽고 있는 파일이 `/opt/plugins/notes/skills/release-note/SKILL.md`
+라면, 상위로 올라가다 만나는 `skills/` 는 `/opt/plugins/notes/skills/` 이고
+그 부모는 `/opt/plugins/notes/` 이므로, 실행할 스크립트는
+`/opt/plugins/notes/lib/collect-commits.sh` 다.
+
 아래는 그 스크립트가 감싼 개별 명령어 — 스크립트가 실패하거나 범위를 수동으로
 다시 확인해야 할 때만 참고.
 
