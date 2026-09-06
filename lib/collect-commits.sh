@@ -102,7 +102,7 @@ selftest() {
   out=$(cd "$tmp" && bash "$self" "$anchor" HEAD)
 
   # 1. every non-anchor commit appears exactly once, in order.
-  types=$(printf '%s\n' "$out" | head -n -1 | cut -f1)
+  types=$(printf '%s\n' "$out" | sed '$d' | cut -f1)
   chk "types in order" "$types" "$(printf 'feat\ntest\nfix\nother')"
 
   # 2. THE regression case: `test:` gets its own type, not lost.
