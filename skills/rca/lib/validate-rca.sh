@@ -22,7 +22,7 @@ bad()  { printf '[FAIL] %s: %s\n' "$1" "$2"; fail=1; }
 warn() { printf '[WARN] %s: %s\n' "$1" "$2"; }
 
 check_frontmatter() {
-  local doc=$1 fm missing=()
+  local doc=$1 fm body missing=()
   if [ "$(head -n 1 "$doc")" != '---' ]; then
     bad frontmatter "file does not open with a '---' delimiter"
     return
@@ -30,6 +30,25 @@ check_frontmatter() {
   fm=$(sed -n '2,/^---$/p' "$doc")
   if ! printf '%s\n' "$fm" | grep -q '^---$'; then
     bad frontmatter "opening '---' has no closing '---'"
+    return
+  fi
+  # Not a full YAML parse (no parser dependency for this cross-harness
+  # script), but the template's frontmatter is flat scalars and flow-style
+  # lists only (document-template.md) -- every non-blank line before the
+  # closing '---' must look like `key: value` / `key:`. Catches the class of
+  # malformed frontmatter that would satisfy the key-prefix check below while
+  # still failing a real YAML/Jekyll parser (PR #10 review, codex BLOCKER).
+  body=$(printf '%s\n' "$fm" | sed '$d')
+  local line bad_line=
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    case "$line" in
+      [A-Za-z_]*:*) ;;
+      *) bad_line=$line; break ;;
+    esac
+  done <<<"$body"
+  if [ -n "$bad_line" ]; then
+    bad frontmatter "line does not look like 'key: value' YAML: '$bad_line'"
     return
   fi
   local key
@@ -71,8 +90,10 @@ check_summary_length() {
   words=$(awk '/^## Section 1:/{f=1;next} /^## Section [2-9]:/{f=0} f' "$doc" | wc -w)
   if [ "$words" -eq 0 ]; then
     bad summary-length "Section 1 (Executive Summary) is empty"
+  elif [ "$words" -lt 50 ]; then
+    bad summary-length "$words words, must be 50-100 (document-template.md)"
   elif [ "$words" -gt 100 ]; then
-    bad summary-length "$words words, must be under 100"
+    bad summary-length "$words words, must be 50-100 (document-template.md)"
   else
     ok "summary-length ($words words)"
   fi
@@ -91,12 +112,18 @@ check_total_length() {
 # Same rule as the repo CI emoji gate: codepoint >= U+1F000, plus U+FE0F.
 check_no_emoji() {
   local doc=$1 hit
-  if ! printf 'a\n' | grep -qP 'a' 2>/dev/null; then
-    bad no-emoji "grep -P is unavailable, cannot scan for emoji codepoints"
-    return
-  fi
   # `head` would mask grep's exit status, so test the captured text instead.
-  hit=$(LC_ALL=C.UTF-8 grep -nP '[\x{1F000}-\x{10FFFF}\x{FE0F}]' "$doc" | head -n 1)
+  if printf 'a\n' | grep -qP 'a' 2>/dev/null; then
+    hit=$(LC_ALL=C.UTF-8 grep -nP '[\x{1F000}-\x{10FFFF}\x{FE0F}]' "$doc" | head -n 1)
+  else
+    # No PCRE grep (e.g. macOS/BSD default grep): every codepoint >= U+10000
+    # is a 4-byte UTF-8 sequence with lead byte 0xF0-0xF4, which a plain
+    # byte-range bracket expression matches without -P. Misses the bare
+    # U+FE0F variation selector, but that codepoint alone (with no preceding
+    # emoji base character) is not the case this check exists for
+    # (PR #10 review, codex BLOCKER: valid docs hard-failed with no fallback).
+    hit=$(LC_ALL=C grep -n $'[\xf0-\xf4]' "$doc" | head -n 1)
+  fi
   if [ -n "$hit" ]; then
     bad no-emoji "emoji at line ${hit%%:*} — use [OK]/[FAIL] or yes/no"
   else
@@ -134,7 +161,11 @@ self_test() {
 
   {
     printf -- '---\nid: "2026-09-06-x"\ntitle: "X"\nslug: "x"\ndate: 2026-09-06\n---\n\n'
-    printf '## Section 1: Executive Summary\n\nA short summary of the incident.\n\n'
+    printf '## Section 1: Executive Summary\n\n'
+    # 60 words, inside the template's 50-100 word range.
+    # shellcheck disable=SC2034  # loop var is only a repeat counter
+    for i in $(seq 60); do printf 'word '; done
+    printf '\n\n'
     local n
     for n in 2 3 4 5 7 8 9; do
       printf '## Section %s: Body\n\n' "$n"
@@ -166,6 +197,51 @@ self_test() {
   out=$("$0" "$tmp/nope.md"); rc=$?
   if [ "$rc" -eq 0 ]; then
     printf '[FAIL] self-test: a missing file was accepted\n'
+    return 1
+  fi
+
+  # Malformed frontmatter: a line that isn't `key: value` still carries all
+  # four required key prefixes, so only the line-shape check (PR #10 review,
+  # codex BLOCKER) catches it.
+  local malformed="$tmp/malformed.md"
+  sed '2a\
+this line is not YAML' "$good" > "$malformed"
+  out=$("$0" "$malformed"); rc=$?
+  if [ "$rc" -eq 0 ]; then
+    printf '[FAIL] self-test: malformed frontmatter was accepted\n%s\n' "$out"
+    return 1
+  fi
+  assert_contains '[FAIL] frontmatter' "$out" "malformed frontmatter line was not reported" || return 1
+
+  # Executive Summary below the template's 50-word floor.
+  local short="$tmp/short.md"
+  {
+    printf -- '---\nid: "2026-09-06-x"\ntitle: "X"\nslug: "x"\ndate: 2026-09-06\n---\n\n'
+    printf '## Section 1: Executive Summary\n\nfive words is too short.\n\n'
+    local n
+    for n in 2 3 4 5 7 8 9; do
+      printf '## Section %s: Body\n\n' "$n"
+      # shellcheck disable=SC2034  # loop var is only a repeat counter
+      for i in $(seq 250); do printf 'word '; done
+      printf '\n\n'
+    done
+  } > "$short"
+  out=$("$0" "$short"); rc=$?
+  if [ "$rc" -eq 0 ]; then
+    printf '[FAIL] self-test: a too-short Executive Summary was accepted\n%s\n' "$out"
+    return 1
+  fi
+  assert_contains '[FAIL] summary-length' "$out" "too-short summary was not reported" || return 1
+
+  # A numbered section title (e.g. "500 Errors") must not confuse section-
+  # order extraction (PR #10 review, agy BLOCKER -- verified factually wrong:
+  # the outer `grep -o '^## Section [1-9]:'` already truncates each match to
+  # just "## Section N:" before digit extraction ever sees the title text).
+  local numbered="$tmp/numbered.md"
+  sed 's/^## Section 3: Body$/## Section 3: 500 Errors and OAuth 2.0/' "$good" > "$numbered"
+  out=$("$0" "$numbered"); rc=$?
+  if [ "$rc" -ne 0 ]; then
+    printf '[FAIL] self-test: a numbered section title broke ordering\n%s\n' "$out"
     return 1
   fi
 
