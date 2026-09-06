@@ -130,6 +130,10 @@ selftest() {
   git -C "$tmp" init -q -b main
   git -C "$tmp" config user.email test@example.com
   git -C "$tmp" config user.name test
+  # Fixed dates on every fixture commit, not the wall clock — a test that
+  # asserts `date +%Y-%m-%d` can flake if the run straddles midnight between
+  # fixture creation and assertion (PR #11 review, codex FOLLOW-UP).
+  export GIT_AUTHOR_DATE="2025-06-01T00:00:00" GIT_COMMITTER_DATE="2025-06-01T00:00:00"
   git -C "$tmp" commit -q --allow-empty -m "chore: anchor"
   anchor=$(git -C "$tmp" rev-parse HEAD)
   git -C "$tmp" commit -q --allow-empty -m "feat: add widget"
@@ -140,6 +144,7 @@ selftest() {
   git -C "$tmp" commit -q --allow-empty -m "perf: cache lookup"
   git -C "$tmp" commit -q --allow-empty -m "style: reformat"
   git -C "$tmp" commit -q --allow-empty -m "bump deps"
+  unset GIT_AUTHOR_DATE GIT_COMMITTER_DATE
 
   out=$(cd "$tmp" && bash "$self" "$anchor" HEAD)
 
@@ -161,7 +166,7 @@ selftest() {
 
   # 4. summary line totals match.
   summary=$(printf '%s\n' "$out" | tail -1)
-  chk "summary line" "$summary" "total=8 other=1 first_date=$(date +%Y-%m-%d) last_date=$(date +%Y-%m-%d)"
+  chk "summary line" "$summary" "total=8 other=1 first_date=2025-06-01 last_date=2025-06-01"
 
   # 5. bad anchor fails with exit 2, not a silent empty result.
   set +e
@@ -249,7 +254,12 @@ FAKEGIT
 }
 
 [ $# -ge 1 ] || usage
-if [ "$1" = "--selftest" ]; then selftest; fi
+if [ "$1" = "--selftest" ]; then
+  # `--selftest` takes no further arguments (PR #11 review, codex FOLLOW-UP:
+  # a malformed `--selftest <extra>` invocation was silently accepted).
+  [ $# -eq 1 ] || usage
+  selftest
+fi
 [ $# -le 2 ] || usage
 
 collect "$1" "${2:-HEAD}"
