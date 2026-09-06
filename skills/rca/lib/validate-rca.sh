@@ -117,6 +117,14 @@ validate() {
   check_no_emoji "$doc"
 }
 
+# Asserts $2 (the captured output) contains $1, else prints $3 and fails.
+assert_contains() {
+  case $2 in
+    *"$1"*) return 0 ;;
+    *) printf '[FAIL] self-test: %s\n%s\n' "$3" "$2"; return 1 ;;
+  esac
+}
+
 self_test() {
   local tmp good bad_doc out rc
   tmp=$(mktemp -d) || return 1
@@ -145,24 +153,15 @@ self_test() {
     printf '[FAIL] self-test: a valid document was rejected\n%s\n' "$out"
     return 1
   fi
-  case $out in
-    *'[OK] total-length'*) : ;;
-    *) printf '[FAIL] self-test: in-range total-length did not report [OK]\n%s\n' "$out"; return 1 ;;
-  esac
+  assert_contains '[OK] total-length' "$out" "in-range total-length did not report [OK]" || return 1
 
   out=$("$0" "$bad_doc"); rc=$?
   if [ "$rc" -eq 0 ]; then
     printf '[FAIL] self-test: a document missing Section 3 was accepted\n%s\n' "$out"
     return 1
   fi
-  case $out in
-    *'[FAIL] sections'*) : ;;
-    *) printf '[FAIL] self-test: missing Section 3 was not reported\n%s\n' "$out"; return 1 ;;
-  esac
-  case $out in
-    *'[FAIL] no-emoji'*) : ;;
-    *) printf '[FAIL] self-test: an emoji glyph was not detected\n%s\n' "$out"; return 1 ;;
-  esac
+  assert_contains '[FAIL] sections' "$out" "missing Section 3 was not reported" || return 1
+  assert_contains '[FAIL] no-emoji' "$out" "an emoji glyph was not detected" || return 1
 
   out=$("$0" "$tmp/nope.md"); rc=$?
   if [ "$rc" -eq 0 ]; then
