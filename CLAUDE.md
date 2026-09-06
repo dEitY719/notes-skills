@@ -82,9 +82,10 @@ Two things this repo depends on are owned by `dEitY719/harness-skills`
 
 - **Helper scripts are optional, and self-testing when present.** A skill that
   needs a deterministic check ships it as `skills/<name>/lib/*.sh` with a
-  `--self-test` case. `tests/run.sh` discovers every such script and runs it,
-  and CI runs `tests/run.sh` — so nothing needs registering, but a helper
-  without a `--self-test` is untested code.
+  `--self-test` case, wired into `tests/run.sh` as a two-line adapter (the
+  harness-skills `tests/` convention — see its README's "Where a repo's tests
+  live"). CI runs `tests/run.sh`; a helper not wired in there is untested
+  code.
 
 ## Emojis
 
