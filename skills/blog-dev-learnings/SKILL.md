@@ -32,13 +32,6 @@ current working directory.
 | `<topic-hint>` | Free-text hint (e.g. "오늘 redis 삽질") — conversation summary, specific incident, or vague pointer. | none — mine the current conversation |
 | `-h` / `--help` / `help` | Print `references/help.md` verbatim and stop. | — |
 
-## Why This Matters
-
-Developers learn best from war stories, not documentation. A well-written "I
-suffered so you don't have to" post prevents the same mistake from happening to 10
-other people. The key is making it fun enough that people actually read it — nobody
-reads boring postmortems voluntarily.
-
 ## Step 1: Pick the Title
 
 The title decides whether anyone clicks. Read `references/title-guide.md` for the
