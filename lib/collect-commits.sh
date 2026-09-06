@@ -12,7 +12,9 @@
 #   bash lib/collect-commits.sh --selftest
 #
 # Output: one TSV line per commit, oldest first, ALWAYS exactly 3 tab-separated
-# fields: `<type><TAB><sha><TAB><subject>` — a literal tab inside a commit
+# fields: `<type><TAB><sha><TAB><subject>` — `<sha>` is the FULL 40-char commit
+# hash (`%H`), not the abbreviated `%h`, so it stays a stable, unambiguous
+# lookup key regardless of later repo growth. A literal tab inside a commit
 # subject (rare but legal) is squashed to a space so the column count never
 # drifts for a consumer doing `cut -f3`. <type> is the conventional-commit
 # prefix (feat/fix/refactor/docs/chore/test/build/ci/perf/style, scope and `!`
@@ -72,7 +74,7 @@ collect() { # <anchor-ref> <head-ref>
   # identical to "zero commits in range" instead of the documented exit 2
   # (PR #11 review, codex BLOCKER). `||` below makes the failure explicit.
   local log_output
-  if ! log_output=$(git log --reverse --format='%h%x09%ad%x09%s' --date=short "$anchor..$head_ref"); then
+  if ! log_output=$(git log --reverse --format='%H%x09%ad%x09%s' --date=short "$anchor..$head_ref"); then
     echo "collect-commits.sh: git log failed for range $anchor..$head_ref" >&2
     return 2
   fi
@@ -179,7 +181,7 @@ selftest() {
   tab_out=$(cd "$tmp" && bash "$self" HEAD~1 HEAD)
   chk "embedded tab in subject squashed to space" \
     "$(printf '%s\n' "$tab_out" | head -1)" \
-    "$(printf 'feat\t%s\tfeat: a b c' "$(git -C "$tmp" log -1 --format=%h)")"
+    "$(printf 'feat\t%s\tfeat: a b c' "$(git -C "$tmp" log -1 --format=%H)")"
   chk "output line has exactly 3 TSV fields" \
     "$(printf '%s\n' "$tab_out" | head -1 | awk -F'\t' '{print NF}')" "3"
 
