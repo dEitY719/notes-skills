@@ -11,15 +11,18 @@
 #   bash lib/collect-commits.sh <anchor-ref> [<head-ref>]
 #   bash lib/collect-commits.sh --selftest
 #
-# Output: one TSV line per commit, oldest first: `<type><TAB><sha><TAB><subject>`.
-# <type> is the conventional-commit prefix (feat/fix/refactor/docs/chore/test/
-# build/ci/perf/style, scope and `!` both tolerated, e.g. `feat(x)!:`) when the
-# subject matches one, else `other` — so every commit lands in exactly one
-# bucket and none can vanish between the categorized and non-conventional sets.
-# A trailing summary line reports:
+# Output: one TSV line per commit, oldest first, ALWAYS exactly 3 tab-separated
+# fields: `<type><TAB><sha><TAB><subject>` — a literal tab inside a commit
+# subject (rare but legal) is squashed to a space so the column count never
+# drifts for a consumer doing `cut -f3`. <type> is the conventional-commit
+# prefix (feat/fix/refactor/docs/chore/test/build/ci/perf/style, scope and `!`
+# both tolerated, e.g. `feat(x)!:`) when the subject matches one, else `other`
+# — so every commit lands in exactly one bucket and none can vanish between
+# the categorized and non-conventional sets. A trailing summary line reports:
 #   total=<n> other=<n> first_date=<YYYY-MM-DD> last_date=<YYYY-MM-DD>
 #
-# Exit 0 on success (zero commits in range included), 2 on usage/git error.
+# Exit 0 on success (zero commits in range included), 2 on usage/git error —
+# including a ref that resolves but isn't a commit (tree/blob SHA).
 set -euo pipefail
 
 usage() {
@@ -48,17 +51,29 @@ collect() { # <anchor-ref> <head-ref>
     echo "collect-commits.sh: not in a git repo" >&2
     return 2
   fi
-  if ! git rev-parse --verify "$anchor" >/dev/null 2>&1; then
-    echo "collect-commits.sh: anchor ref not found: $anchor" >&2
+  # `^{commit}` — not a bare `--verify` — because `--verify` only proves the
+  # ref resolves to *some* object; a tree or blob SHA passes it too, then
+  # fails inside `git log` where the loop below can't see the error (PR #11
+  # review, codex BLOCKER). `^{commit}` peels annotated tags and rejects
+  # anything that isn't a commit, so a bad ref is caught here with the
+  # documented exit 2 instead of silently reaching `git log`.
+  if ! git rev-parse --verify "${anchor}^{commit}" >/dev/null 2>&1; then
+    echo "collect-commits.sh: anchor ref not found or not a commit: $anchor" >&2
     return 2
   fi
-  if ! git rev-parse --verify "$head_ref" >/dev/null 2>&1; then
-    echo "collect-commits.sh: head ref not found: $head_ref" >&2
+  if ! git rev-parse --verify "${head_ref}^{commit}" >/dev/null 2>&1; then
+    echo "collect-commits.sh: head ref not found or not a commit: $head_ref" >&2
     return 2
   fi
 
   while IFS=$'\t' read -r sha date subject; do
     [ -n "$sha" ] || continue
+    # A literal TAB in a commit subject (rare but legal) would otherwise push
+    # the output past 3 columns, breaking the documented TSV contract for any
+    # consumer doing `cut -f3` / `awk -F'\t' '{print $3}'` instead of "read
+    # to end of line" (PR #11 review, codex BLOCKER). Squash to a space so
+    # <type><TAB><sha><TAB><subject> is always exactly 3 fields.
+    subject="${subject//$'\t'/ }"
     type=$(classify "$subject")
     printf '%s\t%s\t%s\n' "$type" "$sha" "$subject"
     total=$((total + 1))
@@ -132,16 +147,30 @@ selftest() {
   set -e
   chk "bad anchor exits 2" "$rc" "2"
 
-  # 6. an embedded literal TAB in the subject does not corrupt the TSV parse
-  # (PR #11 review, agy BLOCKER claim). `read`'s field-splitting hands every
-  # excess field to the LAST named variable verbatim, tabs included, so the
-  # subject column survives intact rather than shifting into a bogus 4th
-  # field or truncating at the first embedded tab.
+  # 6. an embedded literal TAB in the subject is squashed to a space, not left
+  # verbatim (PR #11 review: agy claimed our own `read` would mis-split it —
+  # false, bash hands excess fields to the last variable intact — but codex
+  # correctly flagged that leaving the tab in would still push the OUTPUT
+  # past 3 columns, breaking the documented TSV contract for any consumer
+  # doing `cut -f3` instead of "read to end of line"). Verify exactly 3
+  # tab-separated fields come out, with the embedded tab now a space.
   git -C "$tmp" commit -q --allow-empty -m "$(printf 'feat: a\tb\tc')"
   tab_out=$(cd "$tmp" && bash "$self" HEAD~1 HEAD)
-  chk "embedded tab in subject preserved" \
+  chk "embedded tab in subject squashed to space" \
     "$(printf '%s\n' "$tab_out" | head -1)" \
-    "$(printf 'feat\t%s\tfeat: a\tb\tc' "$(git -C "$tmp" log -1 --format=%h)")"
+    "$(printf 'feat\t%s\tfeat: a b c' "$(git -C "$tmp" log -1 --format=%h)")"
+  chk "output line has exactly 3 TSV fields" \
+    "$(printf '%s\n' "$tab_out" | head -1 | awk -F'\t' '{print NF}')" "3"
+
+  # 7. a ref that resolves but isn't a commit (e.g. a blob SHA) is rejected
+  # with exit 2, not silently reaching `git log` (PR #11 review, codex
+  # BLOCKER: bare `--verify` passes on any object type, not just commits).
+  blob=$(git -C "$tmp" hash-object -w --stdin <<<"not a commit")
+  set +e
+  (cd "$tmp" && bash "$self" "$blob" HEAD >/dev/null 2>&1)
+  rc=$?
+  set -e
+  chk "non-commit ref (blob) exits 2" "$rc" "2"
 
   if [ "$fails" -eq 0 ]; then
     printf '[OK] collect-commits selftest: all cases passed\n'
