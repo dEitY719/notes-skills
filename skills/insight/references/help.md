@@ -8,6 +8,7 @@
 
 ## Arguments
 
+- `-h` / `--help` / `help` — print this file and stop.
 - `topic-hint` (optional) — a phrase anchoring which insight from the
   current chat to capture. If omitted, the skill scans recent turns and
   proposes 1–3 candidates for you to pick.
