@@ -120,6 +120,8 @@ Manifests live at the repo root and all point at one flat `skills/` directory:
 ├── skills/{rca,insight,release-note,task-history,blog-dev-learnings}/
 │   ├── SKILL.md
 │   └── references/
+├── lib/collect-commits.sh                       release-note's helper
+├── tests/collect-commits-selftest.sh             ↳ its --selftest, CI-discovered
 ├── .claude-plugin/{marketplace,plugin}.json     Claude Code
 ├── .codex-plugin/plugin.json                    Codex
 ├── .kimi-plugin/plugin.json                     Kimi CLI
@@ -150,9 +152,13 @@ reusable workflow owned by
 frontmatter, progressive-disclosure line limits, the Codex description budget,
 version agreement, shellcheck, and an emoji gate.
 
-There are no checks defined in this repo. To change what is validated here, open
-a PR against `harness-skills`; a merge to its `main` ships to all fifteen repos
-at once.
+To change what the shared workflow validates, open a PR against `harness-skills`;
+a merge to its `main` ships to all fifteen repos at once.
+
+One repo-specific check does live here: `release-note`'s `lib/collect-commits.sh`
+ships a `--selftest` mode, run via the `tests/*.sh` convention the shared
+workflow auto-discovers — see
+[`tests/collect-commits-selftest.sh`](tests/collect-commits-selftest.sh).
 
 ## Provenance
 

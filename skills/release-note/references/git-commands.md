@@ -28,7 +28,12 @@ git log --oneline --format="%H %s" | grep -i "<prev-version>"
 
 위 두 가지로 찾을 수 없으면 사용자에게 시작 커밋 해시 또는 날짜를 직접 확인한다.
 
-## 커밋 수집
+## 커밋 수집 및 분류
+
+Step 2 는 이 두 가지를 `bash "${CLAUDE_PLUGIN_ROOT}/lib/collect-commits.sh" <anchor> [<head-ref>]`
+한 번의 호출로 처리한다 (커밋별 type/sha/subject + 총계/날짜 범위 요약). 아래는
+그 스크립트가 감싼 개별 명령어 — 스크립트가 실패하거나 범위를 수동으로 다시
+확인해야 할 때만 참고.
 
 ```bash
 # 전체 커밋 (시간 순)
@@ -40,25 +45,6 @@ git log --oneline --reverse <anchor>..HEAD | wc -l
 # 날짜 범위 (시작 / 끝)
 git log --format="%ad" --date=short <anchor>..HEAD | sort | head -1
 git log --format="%ad" --date=short <anchor>..HEAD | sort | tail -1
-```
-
-## 타입별 필터링 (conventional commits)
-
-```bash
-# 기능 추가
-git log --oneline --reverse <anchor>..HEAD | grep -E "^[a-f0-9]+ feat:"
-
-# 버그 수정
-git log --oneline --reverse <anchor>..HEAD | grep -E "^[a-f0-9]+ fix:"
-
-# 리팩토링
-git log --oneline --reverse <anchor>..HEAD | grep -E "^[a-f0-9]+ refactor:"
-
-# 문서/잡무
-git log --oneline --reverse <anchor>..HEAD | grep -E "^[a-f0-9]+ (docs|chore):"
-
-# [WARN] 비관례 커밋 (놓치지 말 것)
-git log --oneline --reverse <anchor>..HEAD | grep -vE "^[a-f0-9]+ (feat|fix|refactor|docs|chore|test|build|ci|perf|style):"
 ```
 
 ## 변경 파일 확인 (테마 그룹핑 시 유용)
