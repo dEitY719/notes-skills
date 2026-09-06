@@ -20,7 +20,7 @@ itself has no frontmatter; match it.
 
 ## Required sections (in order)
 
-If this list and the repo README disagree, the README wins — re-read it (Step 1).
+If this list and `docs/guide/learnings/README.md` (the target repo's, not this plugin's) disagree, that README wins — re-read it (Step 1).
 
 Headings stay English (`## Context`, `## Pattern`, …) per the in-repo
 convention; body is Korean.
