@@ -66,6 +66,17 @@ collect() { # <anchor-ref> <head-ref>
     return 2
   fi
 
+  # Captured, not piped into the loop via process substitution — a
+  # process-substituted `git log` failure is invisible to this function (it
+  # just reads as "no lines"), so a genuine git error would silently look
+  # identical to "zero commits in range" instead of the documented exit 2
+  # (PR #11 review, codex BLOCKER). `||` below makes the failure explicit.
+  local log_output
+  if ! log_output=$(git log --reverse --format='%h%x09%ad%x09%s' --date=short "$anchor..$head_ref"); then
+    echo "collect-commits.sh: git log failed for range $anchor..$head_ref" >&2
+    return 2
+  fi
+
   while IFS=$'\t' read -r sha date subject; do
     [ -n "$sha" ] || continue
     # A literal TAB in a commit subject (rare but legal) would otherwise push
@@ -90,7 +101,7 @@ collect() { # <anchor-ref> <head-ref>
     if [ -z "$last_date" ] || [[ "$date" > "$last_date" ]]; then
       last_date="$date"
     fi
-  done < <(git log --reverse --format='%h%x09%ad%x09%s' --date=short "$anchor..$head_ref")
+  done <<<"$log_output"
 
   printf 'total=%d other=%d first_date=%s last_date=%s\n' \
     "$total" "$other" "${first_date:-none}" "${last_date:-none}"
@@ -202,6 +213,30 @@ selftest() {
   chk "last_date is the true max despite emission order" \
     "$(printf '%s\n' "$date_out" | tail -1 | grep -oE 'last_date=[0-9-]+')" \
     "last_date=2030-01-01"
+
+  # 9. a `git log` failure is propagated as exit 2, not swallowed into a
+  # successful empty summary (PR #11 review, codex BLOCKER: the old process-
+  # substitution `done < <(git log ...)` couldn't see git log's exit status).
+  # Shadow `git` with a wrapper that fails only the `log` subcommand — both
+  # refs still pass the `^{commit}` check, so this exercises exactly the
+  # gap: a valid range where `git log` itself errors afterward.
+  real_git=$(command -v git)
+  fake_bin="$tmp/fakebin"
+  mkdir -p "$fake_bin"
+  cat >"$fake_bin/git" <<FAKEGIT
+#!/bin/sh
+if [ "\$1" = "log" ]; then
+  echo "fake git log failure" >&2
+  exit 128
+fi
+exec "$real_git" "\$@"
+FAKEGIT
+  chmod +x "$fake_bin/git"
+  set +e
+  (cd "$tmp" && PATH="$fake_bin:$PATH" bash "$self" "$date_anchor" HEAD >/dev/null 2>&1)
+  rc=$?
+  set -e
+  chk "git log failure propagates as exit 2" "$rc" "2"
 
   if [ "$fails" -eq 0 ]; then
     printf '[OK] collect-commits selftest: all cases passed\n'
