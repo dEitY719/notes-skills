@@ -78,8 +78,18 @@ collect() { # <anchor-ref> <head-ref>
     printf '%s\t%s\t%s\n' "$type" "$sha" "$subject"
     total=$((total + 1))
     [ "$type" = "other" ] && other=$((other + 1))
-    [ -n "$first_date" ] || first_date="$date"
-    last_date="$date"
+    # True min/max, not "first/last emitted" — `git log --reverse` walks the
+    # commit graph, which is NOT guaranteed to be author-date order (rebase,
+    # cherry-pick, and clock skew all produce commits whose author date is
+    # out of step with their position in history). `YYYY-MM-DD` sorts
+    # correctly as a plain string, so `<`/`>` here is exact (PR #11 review,
+    # codex BLOCKER).
+    if [ -z "$first_date" ] || [[ "$date" < "$first_date" ]]; then
+      first_date="$date"
+    fi
+    if [ -z "$last_date" ] || [[ "$date" > "$last_date" ]]; then
+      last_date="$date"
+    fi
   done < <(git log --reverse --format='%h%x09%ad%x09%s' --date=short "$anchor..$head_ref")
 
   printf 'total=%d other=%d first_date=%s last_date=%s\n' \
@@ -171,6 +181,27 @@ selftest() {
   rc=$?
   set -e
   chk "non-commit ref (blob) exits 2" "$rc" "2"
+
+  # 8. first_date/last_date are the true min/max author date, not "first/last
+  # emitted" (PR #11 review, codex BLOCKER: `git log --reverse` walks the
+  # commit graph, not author-date order — a rebased or cherry-picked commit
+  # keeps its original author date while moving in the graph). On this
+  # linear chain, log order is exactly creation order regardless of author
+  # date metadata, so setting GIT_AUTHOR_DATE out of creation order isolates
+  # the bug: the emitted-first commit gets the LATEST date, the
+  # emitted-last commit gets the EARLIEST.
+  date_anchor=$(git -C "$tmp" rev-parse HEAD)
+  GIT_AUTHOR_DATE="2030-01-01T00:00:00" GIT_COMMITTER_DATE="2030-01-01T00:00:00" \
+    git -C "$tmp" commit -q --allow-empty -m "chore: emitted first, dated last"
+  GIT_AUTHOR_DATE="2020-01-01T00:00:00" GIT_COMMITTER_DATE="2020-01-01T00:00:00" \
+    git -C "$tmp" commit -q --allow-empty -m "chore: emitted last, dated first"
+  date_out=$(cd "$tmp" && bash "$self" "$date_anchor" HEAD)
+  chk "first_date is the true min despite emission order" \
+    "$(printf '%s\n' "$date_out" | tail -1 | grep -oE 'first_date=[0-9-]+')" \
+    "first_date=2020-01-01"
+  chk "last_date is the true max despite emission order" \
+    "$(printf '%s\n' "$date_out" | tail -1 | grep -oE 'last_date=[0-9-]+')" \
+    "last_date=2030-01-01"
 
   if [ "$fails" -eq 0 ]; then
     printf '[OK] collect-commits selftest: all cases passed\n'
