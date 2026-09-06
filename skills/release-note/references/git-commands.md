@@ -31,9 +31,15 @@ git log --oneline --format="%H %s" | grep -i "<prev-version>"
 ## 커밋 수집 및 분류
 
 Step 2 는 이 두 가지를 `bash "${CLAUDE_PLUGIN_ROOT}/lib/collect-commits.sh" <anchor> [<head-ref>]`
-한 번의 호출로 처리한다 (커밋별 type/sha/subject + 총계/날짜 범위 요약). 아래는
-그 스크립트가 감싼 개별 명령어 — 스크립트가 실패하거나 범위를 수동으로 다시
-확인해야 할 때만 참고.
+한 번의 호출로 처리한다 (커밋별 type/sha/subject + 총계/날짜 범위 요약). `CLAUDE_PLUGIN_ROOT`
+는 Claude Code 전용 환경변수 — 이 워크플로는 릴리즈 노트를 만들 대상 프로젝트에서
+실행되므로 CWD 가 이 플러그인 저장소가 아니다. 다른 하네스(Codex, Kimi, Gemini,
+Hermes, OpenCode)는 이 변수를 지원하지 않으므로, 지금 읽고 있는 이
+`git-commands.md`(또는 `SKILL.md`) 파일 자신의 절대 경로를 기준으로 두 단계
+상위 디렉터리(플러그인 저장소 루트)의 `lib/collect-commits.sh` 를 대신 쓴다.
+
+아래는 그 스크립트가 감싼 개별 명령어 — 스크립트가 실패하거나 범위를 수동으로
+다시 확인해야 할 때만 참고.
 
 ```bash
 # 전체 커밋 (시간 순)
