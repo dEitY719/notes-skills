@@ -56,9 +56,9 @@ Extract **what was done** (concrete actions/changes), **why** (background, trigg
 
 ### Step 3: Gather git information
 
-Run `bash "${CLAUDE_PLUGIN_ROOT}/skills/task-history/lib/gather-git-context.sh"` — it
-prints `project`/`branch`/`base`/`commits`/`diffstat`/`log` lines and exits 0 even outside
-a repo. Fields, fallbacks and the non-Claude-Code path: `references/git-context.md`.
+Run `bash "${CLAUDE_PLUGIN_ROOT}/skills/task-history/lib/gather-git-context.sh"` — it prints
+`project`/`branch`/`base`/`commits`/`diffstat`/`log` and exits 0 even outside a repo.
+**`CLAUDE_PLUGIN_ROOT` is Claude Code only** — every other harness takes the path fallback, and the field table, from `references/git-context.md` before running anything.
 
 ### Step 4: Generate JIRA ticket format
 
