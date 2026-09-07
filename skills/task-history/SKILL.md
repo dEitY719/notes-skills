@@ -54,11 +54,11 @@ Run `mkdir -p` on the directory if it does not exist.
 
 Extract **what was done** (concrete actions/changes), **why** (background, trigger), and **what resulted** (outcomes, files, PRs, issues). Use any description argument as extra context, but still analyze the conversation for completeness.
 
-### Step 3: Gather git information (if in a git repo)
+### Step 3: Gather git information
 
-Collect project name (`basename "$(git remote get-url origin)" .git`), recent commits
-(`git log --oneline -10`), current branch, and diff scope (`git diff main...HEAD
---stat`). Use the conversation to identify this session's commits, not just today's.
+Run `bash "${CLAUDE_PLUGIN_ROOT}/skills/task-history/lib/gather-git-context.sh"` — it
+prints `project`/`branch`/`base`/`commits`/`diffstat`/`log` lines and exits 0 even outside
+a repo. Fields, fallbacks and the non-Claude-Code path: `references/git-context.md`.
 
 ### Step 4: Generate JIRA ticket format
 
