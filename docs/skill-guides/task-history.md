@@ -50,7 +50,7 @@ append** 하고, 저쪽은 vault Inbox 에 노트를 **한 개 새로 만듭니�
 
 1. **출력 경로 결정** — 디렉터리 + `YYYY-MM-DD-task-list.md`. 없으면 `mkdir -p`.
 2. **대화 분석** — 무엇을 했는지(구체적 행동/변경), 왜 했는지(배경, 계기), 무엇이 나왔는지(결과, 파일, PR, 이슈)를 추출. description 인자는 보조 맥락일 뿐, 대화 분석은 그대로 수행합니다.
-3. **git 정보 수집** — 프로젝트명, 최근 커밋, 현재 브랜치, `git diff main...HEAD --stat`. 오늘 커밋 전부가 아니라 **이번 세션의** 커밋을 대화로 식별합니다.
+3. **git 정보 수집** — `lib/gather-git-context.sh` 한 번으로 프로젝트명, 브랜치, 기본 브랜치(하드코딩된 `main` 이 아니라 `origin/HEAD` 에서 탐지), 커밋 수, diffstat, 최근 커밋 목록을 받습니다. git repo 밖에서도 exit 0 (`project=N/A`). 필드와 대체 경로는 `references/git-context.md`. 오늘 커밋 전부가 아니라 **이번 세션의** 커밋을 대화로 식별합니다.
 4. **JIRA 형식 생성** — `references/jira-template.md`.
 5. **PR 형식 생성 (조건부)** — `references/pr-template.md`. 대화에 커밋이 없으면 생략.
 6. **파일에 쓰기** — append/create 와 구분선 정책은 `references/file-entry-structure.md`.
@@ -62,5 +62,5 @@ append** 하고, 저쪽은 vault Inbox 에 노트를 **한 개 새로 만듭니�
 - **Step 7 에서 자동 커밋합니다.** 다른 스킬과 달리 플래그 없이도 커밋이 일어납니다 (`chore(task-history): YYYY-MM-DD <summary>`). push 는 하지 않습니다.
 - **Append 전용** 입니다. 기존 항목을 덮어쓰지 않습니다 — 하루에 여러 번 돌리면 같은 파일에 계속 쌓입니다.
 - **출력 경로가 repo 상대가 아닙니다.** 어느 프로젝트에서 실행하든 같은 전역 디렉터리로 갑니다.
-- 이모지를 쓰지 않습니다. 출력 관례는 `references/rules.md` 참고.
+- 이모지를 쓰지 않습니다. 출력 관례는 `references/file-entry-structure.md` 참고.
 - 완성된 예시 항목은 `references/example.md` 에 있습니다.
