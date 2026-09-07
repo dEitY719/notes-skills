@@ -48,7 +48,10 @@ project_name() {
   if url=$(git remote get-url origin 2>/dev/null) && [ -n "$url" ]; then
     url=${url%/}
     url=${url%.git}
-    printf '%s\n' "${url##*/}"
+    # `*[:/]`, not `*/`: an SCP-style remote with no path component
+    # (`git@host:repo.git`) has no slash to cut at, and would otherwise
+    # report `git@host:repo` as the project name (PR #12 review, agy).
+    printf '%s\n' "${url##*[:/]}"
     return
   fi
   if top=$(git rev-parse --show-toplevel 2>/dev/null) && [ -n "$top" ]; then
@@ -87,7 +90,13 @@ gather() { # <max-commits>
   base=$(base_branch)
   base_ref=""
   if [ "$base" != "N/A" ]; then
-    for cand in "origin/$base" "$base"; do
+    # Local branch first, remote-tracking second. The local base tip is what
+    # this branch was actually cut from, so unpushed commits on it belong to
+    # neither `commits` nor `diffstat`; preferring `origin/<base>` would fold
+    # them in and change the meaning of the `main...HEAD` scope this helper
+    # replaced (PR #12 review, codex BLOCKER). A fresh clone that never
+    # created the local branch still resolves through `origin/<base>`.
+    for cand in "$base" "origin/$base"; do
       if git rev-parse --verify -q "${cand}^{commit}" >/dev/null; then
         base_ref="$cand"
         break
@@ -177,7 +186,27 @@ selftest() {
   out=$(cd "$tmp/work" && bash "$self" 1)
   chk "max-commits caps log lines" "$(val "$out" log | wc -l | tr -d ' ')" "1"
 
-  # 5. a repo with no remote falls back to the checkout directory name.
+  # 5. unpushed commits on the local base branch are NOT counted as this
+  # branch's work — the local base tip wins over origin/<base> (PR #12
+  # review, codex BLOCKER).
+  git -C "$tmp/work" checkout -q trunk
+  printf 'local only\n' >"$tmp/work/b.txt"
+  git -C "$tmp/work" add b.txt
+  git -C "$tmp/work" commit -q -m "chore: unpushed on trunk"
+  git -C "$tmp/work" checkout -q -b later
+  printf 'c\n' >"$tmp/work/c.txt"
+  git -C "$tmp/work" add c.txt
+  git -C "$tmp/work" commit -q -m "feat: add c"
+  out=$(cd "$tmp/work" && bash "$self")
+  chk "local base tip wins over origin/<base>" "$(val "$out" commits)" "1"
+
+  # 6. an SCP-style remote with no path component still yields a bare name.
+  git -C "$tmp/work" remote set-url origin "git@example.com:solo.git"
+  out=$(cd "$tmp/work" && bash "$self")
+  chk "scp-style remote without a path" "$(val "$out" project)" "solo"
+  git -C "$tmp/work" remote set-url origin "$tmp/upstream.git"
+
+  # 7. a repo with no remote falls back to the checkout directory name.
   git init -q -b main "$tmp/plain"
   git -C "$tmp/plain" config user.email test@example.com
   git -C "$tmp/plain" config user.name test
@@ -185,13 +214,13 @@ selftest() {
   out=$(cd "$tmp/plain" && bash "$self")
   chk "project falls back to directory name" "$(val "$out" project)" "plain"
 
-  # 6. detached HEAD still reports a usable branch value.
+  # 8. detached HEAD still reports a usable branch value.
   git -C "$tmp/plain" checkout -q --detach HEAD
   out=$(cd "$tmp/plain" && bash "$self")
   chk "detached HEAD labelled" \
     "$(val "$out" branch)" "detached@$(git -C "$tmp/plain" rev-parse --short HEAD)"
 
-  # 7. outside a git repo: exit 0 with project=N/A, not an error the caller
+  # 9. outside a git repo: exit 0 with project=N/A, not an error the caller
   # has to branch on. GIT_CEILING_DIRECTORIES stops discovery from walking up
   # into whatever repo happens to contain $TMPDIR.
   mkdir -p "$tmp/outside"
@@ -202,7 +231,7 @@ selftest() {
   chk "outside a repo: base=N/A" "$(val "$out" base)" "N/A"
   chk "outside a repo: no log lines" "$(val "$out" log | wc -l | tr -d ' ')" "0"
 
-  # 8. a bad argument is a usage error, not a silently ignored one.
+  # 10. a bad argument is a usage error, not a silently ignored one.
   (cd "$tmp/work" && bash "$self" not-a-number >/dev/null 2>&1)
   chk "non-numeric max-commits exits 2" "$?" "2"
   (cd "$tmp/work" && bash "$self" 1 2 >/dev/null 2>&1)
