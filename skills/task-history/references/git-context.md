@@ -71,5 +71,5 @@ git log --format='%h %s' -n 10
 `bash skills/task-history/lib/gather-git-context.sh --selftest` builds
 throwaway repos in `$TMPDIR` and asserts the two behaviours this helper exists
 for: a default branch that is not `main` is detected, and a repo with no
-remote still gets a project name. CI runs it through
+remote still gets a project name. CI reaches it through `tests/run.sh` ->
 `tests/gather-git-context-selftest.sh`.
