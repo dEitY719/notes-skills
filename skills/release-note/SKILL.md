@@ -38,26 +38,27 @@ If args is `-h`/`--help`/`help`, read `references/help.md` verbatim and stop.
 
 ### 1. 앵커 커밋 찾기
 
-`<anchor-ref>` 인자가 있으면 그것을 앵커로 쓰고 이 단계를 건너뛴다. 없으면 이전
-릴리즈의 경계 커밋을 찾는다. 우선순위:
+`<anchor-ref>` 인자가 있으면 그것을 앵커로 쓰고 이 단계를 건너뛴다. 없으면 이전 릴리즈의 경계 커밋을 찾는다.
+우선순위 (구체적인 git 명령어는 `references/git-commands.md` 참고):
 
 1. **git 태그** (있으면 가장 신뢰할 수 있음)
 2. **이전 릴리즈 노트 문서의 커밋** (태그가 없는 프로젝트의 관례)
 3. **사용자에게 시작점 확인**
 
-구체적인 git 명령어는 `references/git-commands.md` 참고.
-
 ### 2. 커밋 수집 및 분류
 
-`bash "${CLAUDE_PLUGIN_ROOT}/lib/collect-commits.sh" <anchor> [<head-ref>]` 로
-범위의 커밋을 한 번에 수집·분류한다. **`CLAUDE_PLUGIN_ROOT` 는 Claude Code 전용 —
-그 외 하네스는 반드시 `references/git-commands.md` 의 대체 경로를 쓸 것.** 출력은
-커밋당 한 줄 `<type><TAB><sha><TAB><subject>` (type 은 conventional prefix 또는
-`other`) + 요약 줄 `total=<n> other=<n> first_date=<d> last_date=<d>`.
+범위의 커밋을 스킬 동봉 helper 로 한 번에 수집·분류한다 (`[FAIL]` 시 `references/git-commands.md`):
 
+```bash
+_cc=""
+if [ -n "${HERMES_SKILL_DIR}" ]; then _cc="${HERMES_SKILL_DIR}/lib/collect-commits.sh"
+elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then _cc="$CLAUDE_PLUGIN_ROOT/skills/release-note/lib/collect-commits.sh"; fi
+[ -n "$_cc" ] && [ -f "$_cc" ] || { printf '[FAIL] collect-commits.sh unresolved (tried: %s). Export HERMES_SKILL_DIR=<this skill dir> or CLAUDE_PLUGIN_ROOT=<plugin dir> first.\n' "${_cc:-nothing}" >&2; return 1 2>/dev/null || exit 1; }
+bash "$_cc" <anchor> [<head-ref>]
+```
+
+출력: 커밋당 `<type><TAB><sha><TAB><subject>` (type 은 conventional prefix 또는 `other`) + 요약 줄 `total=<n> other=<n> first_date=<d> last_date=<d>`.
 [WARN] `other` 로 분류된 커밋(비관례)을 반드시 확인 — 놓치기 쉬움.
-
-앵커를 직접 찾아야 하는 경우의 git 명령은 `references/git-commands.md` 참고.
 
 ### 3. 테마로 그룹핑 (가장 중요)
 

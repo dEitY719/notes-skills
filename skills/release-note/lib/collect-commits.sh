@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# lib/collect-commits.sh — one categorized commit list for release-note Step 2.
+# skills/release-note/lib/collect-commits.sh — one categorized commit list for release-note Step 2.
 #
 # Replaces the five separate `git log | grep` passes that used to live in
 # references/git-commands.md with one git invocation, and closes the
@@ -8,8 +8,8 @@
 # they appeared in the exclusion pattern but had no include line of their own,
 # so they were silently dropped from both (notes-skills#4).
 #
-#   bash lib/collect-commits.sh <anchor-ref> [<head-ref>]
-#   bash lib/collect-commits.sh --selftest
+#   bash skills/release-note/lib/collect-commits.sh <anchor-ref> [<head-ref>]
+#   bash skills/release-note/lib/collect-commits.sh --selftest
 #
 # Output: one TSV line per commit, oldest first, ALWAYS exactly 3 tab-separated
 # fields: `<type><TAB><sha><TAB><subject>` — `<sha>` is the FULL 40-char commit
