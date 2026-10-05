@@ -155,7 +155,7 @@ version agreement, shellcheck, and an emoji gate.
 To change what the shared workflow validates, open a PR against `harness-skills`;
 a merge to its `main` ships to all fifteen repos at once.
 
-One repo-specific check does live here: `release-note`'s `skills/release-note/lib/collect-commits.sh`
+One repo-specific check does live here: `skills/release-note/lib/collect-commits.sh`
 ships a `--selftest` mode, run via the `tests/*.sh` convention the shared
 workflow auto-discovers — see
 [`tests/collect-commits-selftest.sh`](tests/collect-commits-selftest.sh).
