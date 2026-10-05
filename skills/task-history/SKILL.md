@@ -9,8 +9,8 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 license: MIT
 metadata:
   model_recommendation:
-    tier: haiku
-    reason: "simple session summary: conversation mining -> JIRA + PR templates -> append file + auto-commit; bounded structured output"
+    tier: sonnet
+    reason: "conversation mining into two copy-paste-quality formats (JIRA + PR) needs moderate summarisation; append + auto-commit is scripted"
     claude: prefer
     non_claude: advisory-only
 ---

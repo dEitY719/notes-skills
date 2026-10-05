@@ -30,35 +30,28 @@ git log --oneline --format="%H %s" | grep -i "<prev-version>"
 
 ## 커밋 수집 및 분류
 
-Step 2 는 이 두 가지를 `bash "${CLAUDE_PLUGIN_ROOT}/lib/collect-commits.sh" <anchor> [<head-ref>]`
+Step 2 는 이 두 가지를 스킬에 동봉된 `skills/release-note/lib/collect-commits.sh`
 한 번의 호출로 처리한다 (커밋별 type/sha/subject + 총계/날짜 범위 요약).
-`CLAUDE_PLUGIN_ROOT` 는 Claude Code 전용 환경변수 — 이 워크플로는 릴리즈
-노트를 만들 대상 프로젝트에서 실행되므로 CWD 가 이 플러그인 저장소가 아니다.
-다른 하네스(Codex, Kimi, Gemini, Hermes, OpenCode)는 이 변수를 지원하지
-않으며, 이 여섯 하네스 중 어느 것도 대체할 만한 "플러그인 설치 경로"
-환경변수를 제공하지 않는다(각 하네스 매니페스트 — `.codex-plugin/plugin.json`,
-`.kimi-plugin/plugin.json`, `gemini-extension.json`,
-`.opencode/plugins/notes.js`, `.agents/plugins/marketplace.json` — 확인 완료).
-그래서 대체 경로는 지금 읽고 있는 파일 자신의 절대 경로에서 직접 계산해야
-하며, 아래는 그 계산을 하는 그대로 실행 가능한 스니펫이다
-(`THIS_FILE` 한 줄만 채워 넣는다 — Claude Code 가 아닌 하네스에서 이 파일을
-읽은 도구가 알려주는 절대 경로를 그대로 쓴다):
+helper 는 스킬 디렉토리 안에 있으므로 Hermes tap / `npx skills add` 처럼 이 스킬
+디렉토리 하나만 설치하는 하네스에서도 함께 따라온다.
+
+경로 해석은 `SKILL.md` Step 2 의 가드 블록이 담당한다 (정본:
+`dEitY719/harness-skills` `references/plugin-root.md`):
+
+1. `${HERMES_SKILL_DIR}` 가 비어 있지 않으면 `${HERMES_SKILL_DIR}/lib/collect-commits.sh`
+   (스킬 루트 기준 — Hermes 가 `SKILL.md` 본문에 치환해 넣는다).
+2. 아니면 `CLAUDE_PLUGIN_ROOT` 가 비어 있지 않을 때
+   `$CLAUDE_PLUGIN_ROOT/skills/release-note/lib/collect-commits.sh` (플러그인 루트 기준).
+3. 둘 다 없으면 `[FAIL]` 로 멈춘다. `$PWD`/`.` 으로 추측하지 않는다 — 이 워크플로는
+   릴리즈 노트를 만들 대상 프로젝트에서 실행되므로 CWD 는 이 스킬이 아니다.
+
+`[FAIL]` 을 받은 하네스(Codex, Kimi, Gemini, OpenCode, Antigravity 등)는 `SKILL.md` 를
+읽은 디렉토리(= 이 파일의 상위 디렉토리)를 직접 지정해 실행한다:
 
 ```bash
-THIS_FILE="<지금 읽고 있는 이 파일의 절대 경로>"
-d="$(dirname "$THIS_FILE")"
-while [ "$(basename "$d")" != "skills" ] && [ "$d" != "/" ]; do d="$(dirname "$d")"; done
-PLUGIN_ROOT="$(dirname "$d")"
-bash "$PLUGIN_ROOT/lib/collect-commits.sh" <anchor> [<head-ref>]
+export HERMES_SKILL_DIR="<SKILL.md 가 있는 디렉토리의 절대 경로>"
+bash "$HERMES_SKILL_DIR/lib/collect-commits.sh" <anchor> [<head-ref>]
 ```
-
-`skills/` 를 만날 때까지 상위로 올라간 뒤 그 부모를 플러그인 루트로 삼는
-이유는 이 파일과 `SKILL.md` 가 `skills/release-note/` 아래 서로 다른 깊이에
-있어 "몇 단계 위" 라는 고정된 숫자로는 둘 다에 맞지 않기 때문이다 — 이
-스니펫은 어느 파일에서 시작해도 동일하게 동작한다(두 깊이 모두 로컬에서
-검증됨: `skills/release-note/SKILL.md` 와
-`skills/release-note/references/git-commands.md` 모두 저장소 루트로
-정확히 귀결).
 
 아래는 그 스크립트가 감싼 개별 명령어 — 스크립트가 실패하거나 범위를 수동으로
 다시 확인해야 할 때만 참고.
