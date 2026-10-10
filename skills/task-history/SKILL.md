@@ -4,7 +4,7 @@ description: >-
   오늘 한 작업을 JIRA 티켓 + PR 설명 형식으로 daily log 에 기록. Use for
   `/notes:task-history` or "record what I did this session". Do NOT use for reusable
   patterns (notes:insight), postmortems (notes:rca), or vault notes
-  (pkm:obsidian-session-clip).
+  (pkm:obsidian-clip-session).
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 license: MIT
 metadata:
@@ -97,4 +97,4 @@ Next: paste JIRA block into ticket / open PR with the markdown block
 
 ## Related skills
 
-재사용 패턴 문서화는 [[notes:insight]], 장애 분석은 [[notes:rca]]. 세션 1건을 PARA vault Inbox 노트로 남기는 것은 [[pkm:obsidian-session-clip]] — 이쪽은 일자별 daily log append 다.
+재사용 패턴 문서화는 [[notes:insight]], 장애 분석은 [[notes:rca]]. 세션 1건을 PARA vault Inbox 노트로 남기는 것은 [[pkm:obsidian-clip-session]] — 이쪽은 일자별 daily log append 다.
